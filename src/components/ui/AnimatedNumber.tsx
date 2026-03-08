@@ -24,7 +24,7 @@ export default function AnimatedNumber({ value, prefix = '', suffix = '', decima
   }, [display]);
 
   return (
-    <motion.span className={`font-mono ${className}`}>
+    <motion.span className={`font-numbers ${className}`}>
       {displayText}
     </motion.span>
   );
