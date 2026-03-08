@@ -189,7 +189,7 @@ export default function BottomNav() {
           />
 
           <div className="flex items-center justify-around relative">
-            {/* SwiftUI-style sliding active pill */}
+          {/* SwiftUI-style sliding active pill */}
             {!holding && activeIndex >= 0 && (
               <motion.div
                 layoutId="active-pill"
