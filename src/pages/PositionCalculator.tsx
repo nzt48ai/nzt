@@ -11,6 +11,29 @@ import { Label } from '@/components/ui/label';
 const instruments: Instrument[] = ['ES', 'MES', 'NQ', 'MNQ'];
 type KellyMode = 'half' | 'quarter';
 
+function NumericInput({ value, onChange, step, className }: {
+  value: number; onChange: (v: number) => void; step?: number; className?: string;
+}) {
+  const [raw, setRaw] = useState(String(value));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value;
+    setRaw(v);
+    onChange(v === '' ? 0 : Number(v));
+  };
+  const handleBlur = () => setRaw(String(value));
+  return (
+    <input
+      type="number"
+      value={raw}
+      step={step}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      onFocus={(e) => e.target.select()}
+      className={className}
+    />
+  );
+}
+
 export default function PositionCalculator() {
   const store = usePositionStore();
   const [kellyMode, setKellyMode] = useState<KellyMode>('half');
