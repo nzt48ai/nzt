@@ -175,9 +175,7 @@ export default function BottomNav() {
             backdropFilter: holding ? 'blur(80px) saturate(2.2)' : 'blur(50px) saturate(1.9)',
             WebkitBackdropFilter: holding ? 'blur(80px) saturate(2.2)' : 'blur(50px) saturate(1.9)',
             border: '1px solid rgba(255,255,255,0.14)',
-            boxShadow: holding
-              ? '0 16px 56px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -0.5px 0 rgba(255,255,255,0.06)'
-              : '0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -0.5px 0 rgba(255,255,255,0.04)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -0.5px 0 rgba(255,255,255,0.06)',
           }}
         >
           {/* Specular highlight — top edge shine */}
