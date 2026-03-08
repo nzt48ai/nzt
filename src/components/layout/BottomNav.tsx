@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Calculator, TrendingUp, BookOpen, BarChart3, Share2 } from 'lucide-react';
-import { motion, useAnimationControls, AnimatePresence } from 'framer-motion';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useRef, useState, useCallback } from 'react';
 
 const tabs = [
   { path: '/', icon: Calculator, label: 'Position' },
@@ -11,12 +11,13 @@ const tabs = [
   { path: '/share', icon: Share2, label: 'Share' },
 ];
 
+// SwiftUI-style spring config
+const swiftSpring = { type: 'spring' as const, stiffness: 380, damping: 30, mass: 0.8 };
+const gentleSpring = { type: 'spring' as const, stiffness: 260, damping: 24, mass: 1 };
+
 export default function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
-  const controls = useAnimationControls();
-  const lastScrollY = useRef(0);
-  const [visible, setVisible] = useState(true);
 
   // Hold-and-slide state
   const [holding, setHolding] = useState(false);
@@ -24,24 +25,6 @@ export default function BottomNav() {
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  // Scroll hide/show
-  useEffect(() => {
-    const threshold = 10;
-    const onScroll = () => {
-      const currentY = window.scrollY;
-      const delta = currentY - lastScrollY.current;
-      if (delta > threshold && visible) setVisible(false);
-      else if (delta < -threshold && !visible) setVisible(true);
-      lastScrollY.current = currentY;
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [visible]);
-
-  useEffect(() => {
-    controls.start(visible ? { y: 0, opacity: 1 } : { y: 80, opacity: 0 });
-  }, [visible, controls]);
 
   const getTabIndexFromPosition = useCallback((clientX: number) => {
     for (let i = 0; i < tabRefs.current.length; i++) {
@@ -53,26 +36,19 @@ export default function BottomNav() {
     return -1;
   }, []);
 
-  // Touch handlers for hold-and-slide
   const onTouchStart = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0];
     const idx = getTabIndexFromPosition(touch.clientX);
-
     holdTimer.current = setTimeout(() => {
       setHolding(true);
       setHoveredIndex(idx);
-      // Haptic feedback if available
       if (navigator.vibrate) navigator.vibrate(10);
     }, 300);
   }, [getTabIndexFromPosition]);
 
   const onTouchMove = useCallback((e: React.TouchEvent) => {
     if (!holding) {
-      // Cancel hold if moved before activation
-      if (holdTimer.current) {
-        clearTimeout(holdTimer.current);
-        holdTimer.current = null;
-      }
+      if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null; }
       return;
     }
     const touch = e.touches[0];
@@ -84,18 +60,12 @@ export default function BottomNav() {
   }, [holding, hoveredIndex, getTabIndexFromPosition]);
 
   const onTouchEnd = useCallback(() => {
-    if (holdTimer.current) {
-      clearTimeout(holdTimer.current);
-      holdTimer.current = null;
-    }
-    if (holding && hoveredIndex >= 0) {
-      navigate(tabs[hoveredIndex].path);
-    }
+    if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null; }
+    if (holding && hoveredIndex >= 0) navigate(tabs[hoveredIndex].path);
     setHolding(false);
     setHoveredIndex(-1);
   }, [holding, hoveredIndex, navigate]);
 
-  // Mouse fallback for desktop
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     const idx = getTabIndexFromPosition(e.clientX);
     holdTimer.current = setTimeout(() => {
@@ -111,31 +81,22 @@ export default function BottomNav() {
   }, [holding, hoveredIndex, getTabIndexFromPosition]);
 
   const onMouseUp = useCallback(() => {
-    if (holdTimer.current) {
-      clearTimeout(holdTimer.current);
-      holdTimer.current = null;
-    }
-    if (holding && hoveredIndex >= 0) {
-      navigate(tabs[hoveredIndex].path);
-    }
+    if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null; }
+    if (holding && hoveredIndex >= 0) navigate(tabs[hoveredIndex].path);
     setHolding(false);
     setHoveredIndex(-1);
   }, [holding, hoveredIndex, navigate]);
 
   const onMouseLeave = useCallback(() => {
-    if (holdTimer.current) {
-      clearTimeout(holdTimer.current);
-      holdTimer.current = null;
-    }
-    if (holding) {
-      setHolding(false);
-      setHoveredIndex(-1);
-    }
+    if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null; }
+    if (holding) { setHolding(false); setHoveredIndex(-1); }
   }, [holding]);
+
+  const activeIndex = tabs.findIndex(t => t.path === location.pathname);
 
   return (
     <>
-      {/* Expanded glass overlay when holding */}
+      {/* Overlay when holding */}
       <AnimatePresence>
         {holding && (
           <motion.div
@@ -143,8 +104,8 @@ export default function BottomNav() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            style={{ background: 'rgba(0,0,0,0.3)' }}
+            transition={{ duration: 0.2 }}
+            style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)' }}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
             onMouseMove={onMouseMove}
@@ -153,38 +114,35 @@ export default function BottomNav() {
         )}
       </AnimatePresence>
 
-      {/* Expanded label tooltip */}
+      {/* Floating tooltip when holding */}
       <AnimatePresence>
         {holding && hoveredIndex >= 0 && (
           <motion.div
             key={hoveredIndex}
-            className="fixed z-[70] pointer-events-none"
-            initial={{ opacity: 0, scale: 0.6, y: 10 }}
+            className="fixed z-[70] pointer-events-none left-1/2"
+            initial={{ opacity: 0, scale: 0.5, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.6, y: 10 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 28 }}
-            style={{
-              bottom: 90,
-              left: '50%',
-              transform: 'translateX(-50%)',
-            }}
+            exit={{ opacity: 0, scale: 0.5, y: 16 }}
+            transition={swiftSpring}
+            style={{ bottom: 96, transform: 'translateX(-50%)' }}
           >
             <div
-              className="px-5 py-3 rounded-2xl border border-white/[0.15] text-center"
+              className="px-5 py-3 rounded-2xl flex flex-col items-center gap-1.5"
               style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%)',
-                backdropFilter: 'blur(60px) saturate(2)',
-                WebkitBackdropFilter: 'blur(60px) saturate(2)',
-                boxShadow: '0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
+                background: 'linear-gradient(145deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 100%)',
+                backdropFilter: 'blur(80px) saturate(2.2)',
+                WebkitBackdropFilter: 'blur(80px) saturate(2.2)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                boxShadow: '0 16px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(255,255,255,0.05)',
               }}
             >
               {(() => {
                 const Tab = tabs[hoveredIndex];
                 return (
-                  <div className="flex flex-col items-center gap-1.5">
-                    <Tab.icon size={28} strokeWidth={2} className="text-primary" />
+                  <>
+                    <Tab.icon size={28} strokeWidth={2} className="text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
                     <span className="text-sm font-semibold text-foreground">{Tab.label}</span>
-                  </div>
+                  </>
                 );
               })()}
             </div>
@@ -192,22 +150,13 @@ export default function BottomNav() {
         )}
       </AnimatePresence>
 
-      {/* Main nav bar */}
+      {/* Persistent bottom nav */}
       <motion.div
         ref={navRef}
         className="fixed bottom-4 left-1/2 z-[65] w-[calc(100%-2rem)] max-w-md select-none"
         style={{ x: '-50%' }}
-        initial={{ y: 0, opacity: 1 }}
-        animate={holding
-          ? { y: 0, opacity: 1, scale: 1.05 }
-          : visible
-            ? { y: 0, opacity: 1, scale: 1 }
-            : { y: 80, opacity: 0, scale: 1 }
-        }
-        transition={holding
-          ? { type: 'spring', stiffness: 400, damping: 25 }
-          : { type: 'spring', stiffness: 400, damping: 32 }
-        }
+        animate={holding ? { scale: 1.06 } : { scale: 1 }}
+        transition={swiftSpring}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -216,80 +165,119 @@ export default function BottomNav() {
         onMouseUp={onMouseUp}
         onMouseLeave={onMouseLeave}
       >
+        {/* Liquid Glass shell */}
         <nav
-          className="rounded-[22px] border px-2 py-2.5 transition-colors duration-200"
+          className="relative overflow-hidden rounded-[22px] px-1.5 py-2"
           style={{
-            borderColor: holding ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.12)',
             background: holding
-              ? 'linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.06) 100%)'
-              : 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
-            backdropFilter: holding ? 'blur(60px) saturate(2)' : 'blur(40px) saturate(1.8)',
-            WebkitBackdropFilter: holding ? 'blur(60px) saturate(2)' : 'blur(40px) saturate(1.8)',
+              ? 'linear-gradient(145deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 100%)'
+              : 'linear-gradient(145deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.02) 100%)',
+            backdropFilter: holding ? 'blur(80px) saturate(2.2)' : 'blur(50px) saturate(1.9)',
+            WebkitBackdropFilter: holding ? 'blur(80px) saturate(2.2)' : 'blur(50px) saturate(1.9)',
+            border: '1px solid rgba(255,255,255,0.14)',
             boxShadow: holding
-              ? '0 12px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12)'
-              : '0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)',
+              ? '0 16px 56px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -0.5px 0 rgba(255,255,255,0.06)'
+              : '0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -0.5px 0 rgba(255,255,255,0.04)',
           }}
         >
-          <div className="flex items-center justify-around">
+          {/* Specular highlight — top edge shine */}
+          <div
+            className="absolute top-0 left-[10%] right-[10%] h-[1px] pointer-events-none"
+            style={{
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+            }}
+          />
+
+          <div className="flex items-center justify-around relative">
+            {/* SwiftUI-style sliding active pill */}
+            {!holding && activeIndex >= 0 && (
+              <motion.div
+                layoutId="active-pill"
+                className="absolute rounded-xl pointer-events-none"
+                style={{
+                  width: `${100 / tabs.length}%`,
+                  left: `${(activeIndex / tabs.length) * 100}%`,
+                  top: 0,
+                  bottom: 0,
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+                  boxShadow: '0 0 24px hsl(var(--primary) / 0.12), inset 0 0.5px 0 rgba(255,255,255,0.1)',
+                }}
+                transition={swiftSpring}
+              />
+            )}
+
+            {/* Hold-mode sliding highlight */}
+            {holding && hoveredIndex >= 0 && (
+              <motion.div
+                layoutId="hold-pill"
+                className="absolute rounded-xl pointer-events-none"
+                style={{
+                  width: `${100 / tabs.length}%`,
+                  left: `${(hoveredIndex / tabs.length) * 100}%`,
+                  top: 0,
+                  bottom: 0,
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%)',
+                  boxShadow: '0 0 28px hsl(var(--primary) / 0.2), inset 0 0.5px 0 rgba(255,255,255,0.14)',
+                }}
+                transition={swiftSpring}
+              />
+            )}
+
             {tabs.map((tab, i) => {
-              const active = !holding && location.pathname === tab.path;
+              const active = !holding && activeIndex === i;
               const hovered = holding && hoveredIndex === i;
 
               return (
                 <button
                   key={tab.path}
                   ref={(el) => { tabRefs.current[i] = el; }}
-                  onClick={() => {
-                    if (!holding) navigate(tab.path);
-                  }}
-                  className="relative flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all touch-none"
+                  onClick={() => { if (!holding) navigate(tab.path); }}
+                  className="relative flex flex-col items-center gap-0.5 flex-1 py-1.5 rounded-xl touch-none"
                 >
-                  {/* Active indicator (normal mode) */}
-                  {active && !holding && (
-                    <motion.div
-                      layoutId="tab-bg"
-                      className="absolute inset-0 rounded-xl"
-                      style={{ background: 'rgba(255,255,255,0.06)' }}
-                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                    />
-                  )}
-
-                  {/* Hovered indicator (hold mode) */}
-                  {hovered && (
-                    <motion.div
-                      layoutId="hold-highlight"
-                      className="absolute inset-0 rounded-xl"
-                      style={{
-                        background: 'rgba(255,255,255,0.1)',
-                        boxShadow: '0 0 20px rgba(79, 255, 120, 0.15)',
-                      }}
-                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                    />
-                  )}
-
                   <motion.div
                     animate={{
-                      scale: hovered ? 1.25 : 1,
-                      y: hovered ? -4 : 0,
+                      scale: hovered ? 1.3 : active ? 1.05 : 1,
+                      y: hovered ? -6 : 0,
                     }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                    transition={hovered ? swiftSpring : gentleSpring}
                     className="relative z-10"
                   >
                     <tab.icon
-                      size={22}
-                      strokeWidth={hovered ? 2.4 : active ? 2.2 : 1.6}
-                      className={`transition-colors duration-150 ${
-                        hovered ? 'text-primary' : active ? 'text-primary' : 'text-white/40'
+                      size={21}
+                      strokeWidth={hovered ? 2.4 : active ? 2.2 : 1.5}
+                      className={`transition-colors duration-200 ${
+                        hovered || active
+                          ? 'text-primary drop-shadow-[0_0_6px_hsl(var(--primary)/0.4)]'
+                          : 'text-muted-foreground/60'
                       }`}
                     />
                   </motion.div>
-                  <span
-                    className={`relative z-10 text-[10px] font-semibold transition-all duration-150 ${
-                      hovered ? 'text-primary' : active ? 'text-primary' : 'text-white/35'
+                  <motion.span
+                    animate={{
+                      scale: hovered ? 1.1 : 1,
+                      opacity: hovered || active ? 1 : 0.45,
+                    }}
+                    transition={gentleSpring}
+                    className={`relative z-10 text-[10px] font-semibold ${
+                      hovered || active ? 'text-primary' : 'text-muted-foreground'
                     }`}
                   >
                     {tab.label}
-                  </span>
+                  </motion.span>
+
+                  {/* Active dot indicator */}
+                  <AnimatePresence>
+                    {active && (
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={swiftSpring}
+                        className="absolute -top-0.5 w-1 h-1 rounded-full bg-primary"
+                        style={{ boxShadow: '0 0 6px hsl(var(--primary) / 0.6)' }}
+                      />
+                    )}
+                  </AnimatePresence>
                 </button>
               );
             })}
