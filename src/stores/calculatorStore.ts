@@ -16,6 +16,23 @@ export const INSTRUMENT_LABELS: Record<Instrument, string> = {
   MNQ: 'Micro E-mini NASDAQ',
 };
 
+// ES/MES share S&P prices, NQ/MNQ share NASDAQ prices
+type PriceGroup = 'sp' | 'nq';
+const INSTRUMENT_GROUP: Record<Instrument, PriceGroup> = {
+  ES: 'sp', MES: 'sp', NQ: 'nq', MNQ: 'nq',
+};
+
+interface PriceSet {
+  entry: number;
+  stop: number;
+  target: number;
+}
+
+const DEFAULT_PRICES: Record<PriceGroup, PriceSet> = {
+  sp: { entry: 5500, stop: 5490, target: 5520 },
+  nq: { entry: 21500, stop: 21470, target: 21560 },
+};
+
 interface PositionState {
   instrument: Instrument;
   balance: number;
@@ -24,6 +41,8 @@ interface PositionState {
   stopLoss: number;
   targetPrice: number;
   winRate: number;
+  // Memory for each price group
+  _prices: Record<PriceGroup, PriceSet>;
   setInstrument: (v: Instrument) => void;
   setBalance: (v: number) => void;
   setRiskPercent: (v: number) => void;
@@ -33,15 +52,41 @@ interface PositionState {
   setWinRate: (v: number) => void;
 }
 
-export const usePositionStore = create<PositionState>((set) => ({
+export const usePositionStore = create<PositionState>((set, get) => ({
   instrument: 'ES',
   balance: 25000,
   riskPercent: 2,
-  entryPrice: 5500,
-  stopLoss: 5490,
-  targetPrice: 5520,
+  entryPrice: DEFAULT_PRICES.sp.entry,
+  stopLoss: DEFAULT_PRICES.sp.stop,
+  targetPrice: DEFAULT_PRICES.sp.target,
   winRate: 55,
-  setInstrument: (v) => set({ instrument: v }),
+  _prices: { ...DEFAULT_PRICES },
+
+  setInstrument: (v) => {
+    const state = get();
+    const currentGroup = INSTRUMENT_GROUP[state.instrument];
+    const newGroup = INSTRUMENT_GROUP[v];
+
+    // Save current prices to memory
+    const updatedPrices = {
+      ...state._prices,
+      [currentGroup]: {
+        entry: state.entryPrice,
+        stop: state.stopLoss,
+        target: state.targetPrice,
+      },
+    };
+
+    // Load prices from the new group
+    const loaded = updatedPrices[newGroup];
+    set({
+      instrument: v,
+      entryPrice: loaded.entry,
+      stopLoss: loaded.stop,
+      targetPrice: loaded.target,
+      _prices: updatedPrices,
+    });
+  },
   setBalance: (v) => set({ balance: v }),
   setRiskPercent: (v) => set({ riskPercent: v }),
   setEntryPrice: (v) => set({ entryPrice: v }),
