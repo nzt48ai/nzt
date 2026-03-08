@@ -1,60 +1,112 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  /* Apple Stocks Dark Mode (default) */
   :root {
-    --background: 220 20% 6%;
-    --foreground: 210 20% 92%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
 
-    --card: 220 18% 10%;
-    --card-foreground: 210 20% 92%;
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 220 18% 10%;
-    --popover-foreground: 210 20% 92%;
+    --popover: 0 0% 11%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 160 80% 45%;
-    --primary-foreground: 220 20% 6%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 16% 16%;
-    --secondary-foreground: 210 20% 85%;
+    --secondary: 0 0% 17%;
+    --secondary-foreground: 0 0% 92%;
 
-    --muted: 220 14% 14%;
-    --muted-foreground: 215 12% 55%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 56%;
 
-    --accent: 270 60% 55%;
-    --accent-foreground: 210 20% 95%;
+    --accent: 211 100% 50%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 55%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 4 100% 59%;
+    --destructive-foreground: 0 0% 100%;
 
-    --success: 160 80% 45%;
-    --success-foreground: 220 20% 6%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 55%;
-    --warning-foreground: 220 20% 6%;
+    --warning: 38 100% 50%;
+    --warning-foreground: 0 0% 0%;
 
-    --border: 220 14% 18%;
-    --input: 220 14% 18%;
-    --ring: 160 80% 45%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 142 71% 45%;
 
-    --radius: 0.75rem;
+    --radius: 0.875rem;
 
-    --glass-bg: 220 18% 10% / 0.6;
-    --glass-border: 220 14% 25% / 0.4;
-    --glow-primary: 160 80% 45%;
-    --glow-accent: 270 60% 55%;
+    --glass-bg: 0 0% 11% / 0.8;
+    --glass-border: 0 0% 22% / 0.5;
+    --glow-primary: 142 71% 45%;
+    --glow-accent: 211 100% 50%;
 
-    --sidebar-background: 220 18% 8%;
-    --sidebar-foreground: 210 20% 85%;
-    --sidebar-primary: 160 80% 45%;
-    --sidebar-primary-foreground: 220 20% 6%;
-    --sidebar-accent: 220 16% 14%;
-    --sidebar-accent-foreground: 210 20% 85%;
-    --sidebar-border: 220 14% 18%;
-    --sidebar-ring: 160 80% 45%;
+    --sidebar-background: 0 0% 7%;
+    --sidebar-foreground: 0 0% 85%;
+    --sidebar-primary: 142 71% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 14%;
+    --sidebar-accent-foreground: 0 0% 85%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 142 71% 45%;
+  }
+
+  /* Apple Stocks Light Mode */
+  .light {
+    --background: 0 0% 96%;
+    --foreground: 0 0% 0%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 90%;
+    --secondary-foreground: 0 0% 20%;
+
+    --muted: 0 0% 93%;
+    --muted-foreground: 0 0% 44%;
+
+    --accent: 211 100% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 4 100% 59%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 100% 50%;
+    --warning-foreground: 0 0% 0%;
+
+    --border: 0 0% 85%;
+    --input: 0 0% 85%;
+    --ring: 142 71% 45%;
+
+    --glass-bg: 0 0% 100% / 0.8;
+    --glass-border: 0 0% 85% / 0.5;
+    --glow-primary: 142 71% 45%;
+    --glow-accent: 211 100% 50%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 20%;
+    --sidebar-primary: 142 71% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 93%;
+    --sidebar-accent-foreground: 0 0% 20%;
+    --sidebar-border: 0 0% 85%;
+    --sidebar-ring: 142 71% 45%;
   }
 }
 
@@ -65,7 +117,8 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: -apple-system, 'SF Pro Display', 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 
   /* Custom scrollbar */
@@ -83,30 +136,25 @@
 
 @layer components {
   .glass-card {
-    @apply rounded-xl border;
+    @apply rounded-2xl border;
     background: hsl(var(--glass-bg));
     border-color: hsl(var(--glass-border));
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   .glow-primary {
-    box-shadow: 0 0 20px hsl(var(--glow-primary) / 0.15),
-                0 0 60px hsl(var(--glow-primary) / 0.05);
+    box-shadow: 0 0 24px hsl(var(--glow-primary) / 0.12),
+                0 0 80px hsl(var(--glow-primary) / 0.04);
   }
 
   .glow-accent {
-    box-shadow: 0 0 20px hsl(var(--glow-accent) / 0.15),
-                0 0 60px hsl(var(--glow-accent) / 0.05);
+    box-shadow: 0 0 24px hsl(var(--glow-accent) / 0.12),
+                0 0 80px hsl(var(--glow-accent) / 0.04);
   }
 
   .gradient-bg {
-    background: linear-gradient(
-      145deg,
-      hsl(220 20% 6%) 0%,
-      hsl(230 22% 9%) 50%,
-      hsl(220 20% 6%) 100%
-    );
+    background: hsl(var(--background));
   }
 
   .gradient-primary {
