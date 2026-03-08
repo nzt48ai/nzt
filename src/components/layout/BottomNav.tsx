@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Calculator, TrendingUp, BookOpen, BarChart3, Share2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useAnimationControls } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 
 const tabs = [
   { path: '/', icon: Calculator, label: 'Position' },
@@ -13,9 +14,46 @@ const tabs = [
 export default function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
+  const controls = useAnimationControls();
+  const lastScrollY = useRef(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const threshold = 10;
+
+    const onScroll = () => {
+      const currentY = window.scrollY;
+      const delta = currentY - lastScrollY.current;
+
+      if (delta > threshold && visible) {
+        setVisible(false);
+      } else if (delta < -threshold && !visible) {
+        setVisible(true);
+      }
+
+      lastScrollY.current = currentY;
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [visible]);
+
+  useEffect(() => {
+    controls.start(
+      visible
+        ? { y: 0, opacity: 1 }
+        : { y: 80, opacity: 0 }
+    );
+  }, [visible, controls]);
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md">
+    <motion.div
+      className="fixed bottom-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-md"
+      style={{ x: '-50%' }}
+      initial={{ y: 0, opacity: 1 }}
+      animate={controls}
+      transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+    >
       <nav
         className="rounded-[22px] border border-white/[0.12] px-2 py-2.5"
         style={{
@@ -38,9 +76,7 @@ export default function BottomNav() {
                   <motion.div
                     layoutId="tab-bg"
                     className="absolute inset-0 rounded-xl"
-                    style={{
-                      background: 'rgba(255,255,255,0.06)',
-                    }}
+                    style={{ background: 'rgba(255,255,255,0.06)' }}
                     transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                   />
                 )}
@@ -61,6 +97,6 @@ export default function BottomNav() {
           })}
         </div>
       </nav>
-    </div>
+    </motion.div>
   );
 }
