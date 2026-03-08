@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCompoundStore } from '@/stores/calculatorStore';
 import { calcCompoundGrowthExpected } from '@/lib/calculations';
@@ -54,18 +54,18 @@ export default function CompoundCalculator() {
             <AreaChart data={data36}>
               <defs>
                 <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(160, 80%, 45%)" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="hsl(270, 60%, 55%)" stopOpacity={0.05} />
+                  <stop offset="0%" stopColor="hsl(137, 100%, 65%)" stopOpacity={0.4} />
+                  <stop offset="100%" stopColor="hsl(179, 90%, 50%)" stopOpacity={0.05} />
                 </linearGradient>
               </defs>
-              <XAxis dataKey="month" tick={{ fontSize: 10, fill: 'hsl(215,12%,55%)' }} tickFormatter={(v) => `M${v}`} />
-              <YAxis tick={{ fontSize: 10, fill: 'hsl(215,12%,55%)' }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+              <XAxis dataKey="month" tick={{ fontSize: 10, fill: 'hsl(150,10%,50%)' }} tickFormatter={(v) => `M${v}`} />
+              <YAxis tick={{ fontSize: 10, fill: 'hsl(150,10%,50%)' }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
               <Tooltip
-                contentStyle={{ background: 'hsl(220,18%,10%)', border: '1px solid hsl(220,14%,25%)', borderRadius: '8px', fontSize: '12px' }}
+                contentStyle={{ background: 'hsl(150,20%,8%)', border: '1px solid hsl(150,10%,20%)', borderRadius: '8px', fontSize: '12px' }}
                 formatter={(v: number) => [`$${v.toLocaleString()}`, 'Balance']}
                 labelFormatter={(v) => `Month ${v}`}
               />
-              <Area type="monotone" dataKey="balance" stroke="hsl(160,80%,45%)" fill="url(#equityGrad)" strokeWidth={2} />
+              <Area type="monotone" dataKey="balance" stroke="hsl(137,100%,65%)" fill="url(#equityGrad)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -77,6 +77,18 @@ export default function CompoundCalculator() {
 function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
   label: string; value: number; onChange: (v: number) => void; prefix?: string; suffix?: string; step?: number;
 }) {
+  const [raw, setRaw] = useState(String(value));
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value;
+    setRaw(v);
+    onChange(v === '' ? 0 : Number(v));
+  };
+
+  const handleBlur = () => {
+    setRaw(String(value));
+  };
+
   return (
     <div>
       <Label className="text-[10px] text-muted-foreground">{label}</Label>
@@ -84,9 +96,11 @@ function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
         {prefix && <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{prefix}</span>}
         <Input
           type="number"
-          value={value || ''}
+          value={raw}
           step={step}
-          onChange={(e) => onChange(e.target.value === '' ? 0 : Number(e.target.value))}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          onFocus={(e) => e.target.select()}
           className={`bg-secondary border-border font-mono text-sm h-9 ${prefix ? 'pl-6' : ''} ${suffix ? 'pr-6' : ''}`}
         />
         {suffix && <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{suffix}</span>}

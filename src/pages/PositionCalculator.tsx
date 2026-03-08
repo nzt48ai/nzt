@@ -11,6 +11,29 @@ import { Label } from '@/components/ui/label';
 const instruments: Instrument[] = ['ES', 'MES', 'NQ', 'MNQ'];
 type KellyMode = 'half' | 'quarter';
 
+function NumericInput({ value, onChange, step, className }: {
+  value: number; onChange: (v: number) => void; step?: number; className?: string;
+}) {
+  const [raw, setRaw] = useState(String(value));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value;
+    setRaw(v);
+    onChange(v === '' ? 0 : Number(v));
+  };
+  const handleBlur = () => setRaw(String(value));
+  return (
+    <input
+      type="number"
+      value={raw}
+      step={step}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      onFocus={(e) => e.target.select()}
+      className={className}
+    />
+  );
+}
+
 export default function PositionCalculator() {
   const store = usePositionStore();
   const [kellyMode, setKellyMode] = useState<KellyMode>('half');
@@ -58,10 +81,9 @@ export default function PositionCalculator() {
         <p className="text-xs text-muted-foreground mb-1">Account Balance</p>
         <div className="relative inline-block">
           <span className="text-muted-foreground text-2xl font-light absolute -left-5 top-1">$</span>
-          <input
-            type="number"
+          <NumericInput
             value={store.balance}
-            onChange={(e) => store.setBalance(Number(e.target.value))}
+            onChange={store.setBalance}
             className="bg-transparent text-4xl font-bold font-mono text-foreground text-center outline-none w-48 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </div>
@@ -71,41 +93,37 @@ export default function PositionCalculator() {
       <div className="grid grid-cols-2 gap-3">
         <GlassCard className="py-3 px-4">
           <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Entry</Label>
-          <input
-            type="number"
+          <NumericInput
             value={store.entryPrice}
+            onChange={store.setEntryPrice}
             step={0.25}
-            onChange={(e) => store.setEntryPrice(Number(e.target.value))}
             className="bg-transparent text-xl font-bold font-mono text-foreground w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </GlassCard>
         <GlassCard className="py-3 px-4">
           <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Stop Loss</Label>
-          <input
-            type="number"
+          <NumericInput
             value={store.stopLoss}
+            onChange={store.setStopLoss}
             step={0.25}
-            onChange={(e) => store.setStopLoss(Number(e.target.value))}
             className="bg-transparent text-xl font-bold font-mono text-destructive w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </GlassCard>
         <GlassCard className="py-3 px-4">
           <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Target</Label>
-          <input
-            type="number"
+          <NumericInput
             value={store.targetPrice}
+            onChange={store.setTargetPrice}
             step={0.25}
-            onChange={(e) => store.setTargetPrice(Number(e.target.value))}
             className="bg-transparent text-xl font-bold font-mono text-primary w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </GlassCard>
         <GlassCard className="py-3 px-4">
           <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Win Rate</Label>
           <div className="flex items-baseline gap-0.5 mt-1">
-            <input
-              type="number"
+            <NumericInput
               value={store.winRate}
-              onChange={(e) => store.setWinRate(Number(e.target.value))}
+              onChange={store.setWinRate}
               className="bg-transparent text-xl font-bold font-mono text-foreground w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             <span className="text-muted-foreground text-sm">%</span>

@@ -1,112 +1,114 @@
-@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  /* Apple Stocks Dark Mode (default) */
+  /* Dark Mode - Inspired by CryptoLens fintech UI */
   :root {
-    --background: 0 0% 0%;
+    --background: 140 43% 3%;
     --foreground: 0 0% 100%;
 
-    --card: 0 0% 11%;
+    --card: 150 20% 8%;
     --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 11%;
+    --popover: 150 20% 8%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 142 71% 45%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 137 100% 65%;
+    --primary-foreground: 140 43% 3%;
 
-    --secondary: 0 0% 17%;
-    --secondary-foreground: 0 0% 92%;
+    --secondary: 150 15% 12%;
+    --secondary-foreground: 0 0% 85%;
 
-    --muted: 0 0% 14%;
-    --muted-foreground: 0 0% 56%;
+    --muted: 150 10% 15%;
+    --muted-foreground: 160 10% 50%;
 
-    --accent: 211 100% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 179 90% 50%;
+    --accent-foreground: 140 43% 3%;
 
-    --destructive: 4 100% 59%;
+    --destructive: 303 100% 64%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
+    --success: 137 100% 65%;
+    --success-foreground: 140 43% 3%;
 
     --warning: 38 100% 50%;
     --warning-foreground: 0 0% 0%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 142 71% 45%;
+    --border: 150 10% 16%;
+    --input: 150 10% 16%;
+    --ring: 137 100% 65%;
 
     --radius: 0.875rem;
 
-    --glass-bg: 0 0% 11% / 0.8;
-    --glass-border: 0 0% 22% / 0.5;
-    --glow-primary: 142 71% 45%;
-    --glow-accent: 211 100% 50%;
+    --glass-bg: 150 20% 8% / 0.7;
+    --glass-border: 150 10% 20% / 0.4;
+    --glow-primary: 137 100% 65%;
+    --glow-accent: 179 90% 50%;
+    --glow-pink: 303 100% 64%;
 
-    --sidebar-background: 0 0% 7%;
+    --sidebar-background: 140 30% 5%;
     --sidebar-foreground: 0 0% 85%;
-    --sidebar-primary: 142 71% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 14%;
+    --sidebar-primary: 137 100% 65%;
+    --sidebar-primary-foreground: 140 43% 3%;
+    --sidebar-accent: 150 10% 14%;
     --sidebar-accent-foreground: 0 0% 85%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 142 71% 45%;
+    --sidebar-border: 150 10% 16%;
+    --sidebar-ring: 137 100% 65%;
   }
 
-  /* Apple Stocks Light Mode */
+  /* Light Mode */
   .light {
-    --background: 0 0% 96%;
-    --foreground: 0 0% 0%;
+    --background: 0 0% 97%;
+    --foreground: 140 43% 3%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card-foreground: 140 43% 3%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover-foreground: 140 43% 3%;
 
-    --primary: 142 71% 45%;
+    --primary: 137 80% 42%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 90%;
-    --secondary-foreground: 0 0% 20%;
+    --secondary: 150 8% 92%;
+    --secondary-foreground: 140 20% 20%;
 
-    --muted: 0 0% 93%;
-    --muted-foreground: 0 0% 44%;
+    --muted: 150 8% 93%;
+    --muted-foreground: 150 8% 40%;
 
-    --accent: 211 100% 50%;
+    --accent: 179 70% 40%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 4 100% 59%;
+    --destructive: 303 80% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 71% 45%;
+    --success: 137 80% 42%;
     --success-foreground: 0 0% 100%;
 
     --warning: 38 100% 50%;
     --warning-foreground: 0 0% 0%;
 
-    --border: 0 0% 85%;
-    --input: 0 0% 85%;
-    --ring: 142 71% 45%;
+    --border: 150 8% 85%;
+    --input: 150 8% 85%;
+    --ring: 137 80% 42%;
 
     --glass-bg: 0 0% 100% / 0.8;
-    --glass-border: 0 0% 85% / 0.5;
-    --glow-primary: 142 71% 45%;
-    --glow-accent: 211 100% 50%;
+    --glass-border: 150 8% 85% / 0.5;
+    --glow-primary: 137 80% 42%;
+    --glow-accent: 179 70% 40%;
+    --glow-pink: 303 80% 50%;
 
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 20%;
-    --sidebar-primary: 142 71% 45%;
+    --sidebar-foreground: 140 20% 20%;
+    --sidebar-primary: 137 80% 42%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 93%;
-    --sidebar-accent-foreground: 0 0% 20%;
-    --sidebar-border: 0 0% 85%;
-    --sidebar-ring: 142 71% 45%;
+    --sidebar-accent: 150 8% 93%;
+    --sidebar-accent-foreground: 140 20% 20%;
+    --sidebar-border: 150 8% 85%;
+    --sidebar-ring: 137 80% 42%;
   }
 }
 
@@ -117,7 +119,6 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: -apple-system, 'SF Pro Display', 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -139,18 +140,23 @@
     @apply rounded-2xl border;
     background: hsl(var(--glass-bg));
     border-color: hsl(var(--glass-border));
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
   }
 
   .glow-primary {
-    box-shadow: 0 0 24px hsl(var(--glow-primary) / 0.12),
-                0 0 80px hsl(var(--glow-primary) / 0.04);
+    box-shadow: 0 0 30px hsl(var(--glow-primary) / 0.15),
+                0 0 80px hsl(var(--glow-primary) / 0.05);
   }
 
   .glow-accent {
-    box-shadow: 0 0 24px hsl(var(--glow-accent) / 0.12),
-                0 0 80px hsl(var(--glow-accent) / 0.04);
+    box-shadow: 0 0 30px hsl(var(--glow-accent) / 0.15),
+                0 0 80px hsl(var(--glow-accent) / 0.05);
+  }
+
+  .glow-pink {
+    box-shadow: 0 0 30px hsl(var(--glow-pink) / 0.15),
+                0 0 80px hsl(var(--glow-pink) / 0.05);
   }
 
   .gradient-bg {
@@ -159,6 +165,10 @@
 
   .gradient-primary {
     background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  }
+
+  .gradient-pink {
+    background: linear-gradient(135deg, hsl(var(--destructive)), hsl(var(--accent)));
   }
 
   .text-gradient {
