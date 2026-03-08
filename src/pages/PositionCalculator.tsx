@@ -58,10 +58,9 @@ export default function PositionCalculator() {
         <p className="text-xs text-muted-foreground mb-1">Account Balance</p>
         <div className="relative inline-block">
           <span className="text-muted-foreground text-2xl font-light absolute -left-5 top-1">$</span>
-          <input
-            type="number"
+          <NumericInput
             value={store.balance}
-            onChange={(e) => store.setBalance(Number(e.target.value))}
+            onChange={store.setBalance}
             className="bg-transparent text-4xl font-bold font-mono text-foreground text-center outline-none w-48 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </div>
