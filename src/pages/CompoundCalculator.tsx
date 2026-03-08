@@ -23,7 +23,7 @@ export default function CompoundCalculator() {
   return (
     <div className="space-y-4">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <h1 className="text-xl font-bold text-gradient">Compound Growth</h1>
+        <h1 className="text-xl font-bold text-foreground">Compound Growth</h1>
         <p className="text-xs text-muted-foreground mt-0.5">Simulate account growth over time</p>
       </motion.div>
 
@@ -54,18 +54,18 @@ export default function CompoundCalculator() {
             <AreaChart data={data36}>
               <defs>
                 <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(137, 100%, 65%)" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="hsl(179, 90%, 50%)" stopOpacity={0.05} />
+                  <stop offset="0%" stopColor="hsl(220, 80%, 55%)" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="hsl(220, 80%, 55%)" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
-              <XAxis dataKey="month" tick={{ fontSize: 10, fill: 'hsl(150,10%,50%)' }} tickFormatter={(v) => `M${v}`} />
-              <YAxis tick={{ fontSize: 10, fill: 'hsl(150,10%,50%)' }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+              <XAxis dataKey="month" tick={{ fontSize: 10, fill: 'hsl(220,10%,50%)' }} tickFormatter={(v) => `M${v}`} />
+              <YAxis tick={{ fontSize: 10, fill: 'hsl(220,10%,50%)' }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
               <Tooltip
-                contentStyle={{ background: 'hsl(150,20%,8%)', border: '1px solid hsl(150,10%,20%)', borderRadius: '8px', fontSize: '12px' }}
+                contentStyle={{ background: 'hsl(0,0%,100%)', border: '1px solid hsl(220,14%,90%)', borderRadius: '12px', fontSize: '12px' }}
                 formatter={(v: number) => [`$${v.toLocaleString()}`, 'Balance']}
                 labelFormatter={(v) => `Month ${v}`}
               />
-              <Area type="monotone" dataKey="balance" stroke="hsl(137,100%,65%)" fill="url(#equityGrad)" strokeWidth={2} />
+              <Area type="monotone" dataKey="balance" stroke="hsl(220,80%,55%)" fill="url(#equityGrad)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -101,7 +101,7 @@ function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
           onChange={handleChange}
           onBlur={handleBlur}
           onFocus={(e) => e.target.select()}
-          className={`bg-secondary border-border font-mono text-sm h-9 ${prefix ? 'pl-6' : ''} ${suffix ? 'pr-6' : ''}`}
+          className={`bg-secondary border-border font-numbers text-sm h-9 ${prefix ? 'pl-6' : ''} ${suffix ? 'pr-6' : ''}`}
         />
         {suffix && <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{suffix}</span>}
       </div>
@@ -113,7 +113,7 @@ function ProjectionCard({ label, value }: { label: string; value: number }) {
   return (
     <GlassCard glow="primary" className="text-center">
       <p className="text-[10px] text-muted-foreground">{label}</p>
-      <p className="text-sm font-bold font-mono text-primary mt-1">
+      <p className="text-sm font-bold font-numbers text-primary mt-1">
         <AnimatedNumber value={value} prefix="$" decimals={0} />
       </p>
     </GlassCard>

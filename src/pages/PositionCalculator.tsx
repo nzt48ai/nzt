@@ -4,8 +4,6 @@ import { usePositionStore, type Instrument, INSTRUMENT_LABELS } from '@/stores/c
 import { calcPositionSize } from '@/lib/calculations';
 import GlassCard from '@/components/ui/GlassCard';
 import AnimatedNumber from '@/components/ui/AnimatedNumber';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 const instruments: Instrument[] = ['ES', 'MES', 'NQ', 'MNQ'];
@@ -17,7 +15,6 @@ function NumericInput({ value, onChange, step, className }: {
   const [raw, setRaw] = useState(String(value));
   const [focused, setFocused] = useState(false);
 
-  // Sync raw with external value changes (e.g. instrument switch) when not focused
   if (!focused && raw !== String(value)) {
     setRaw(String(value));
   }
@@ -65,7 +62,7 @@ export default function PositionCalculator() {
         <p className="text-xs text-muted-foreground mt-0.5">Kelly-based contract sizing</p>
       </motion.div>
 
-      {/* Instrument Selector - pill style */}
+      {/* Instrument Selector */}
       <div className="flex gap-2">
         {instruments.map((inst) => (
           <button
@@ -73,8 +70,8 @@ export default function PositionCalculator() {
             onClick={() => store.setInstrument(inst)}
             className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
               store.instrument === inst
-                ? 'bg-primary text-primary-foreground shadow-lg'
-                : 'bg-secondary text-muted-foreground hover:text-foreground'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'bg-card border border-border text-muted-foreground hover:text-foreground'
             }`}
           >
             {inst}
@@ -90,7 +87,7 @@ export default function PositionCalculator() {
           <NumericInput
             value={store.balance}
             onChange={store.setBalance}
-            className="bg-transparent text-4xl font-bold font-mono text-foreground text-center outline-none w-48 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="bg-transparent text-4xl font-bold font-numbers text-foreground text-center outline-none w-48 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </div>
       </GlassCard>
@@ -103,7 +100,7 @@ export default function PositionCalculator() {
             value={store.entryPrice}
             onChange={store.setEntryPrice}
             step={0.25}
-            className="bg-transparent text-xl font-bold font-mono text-foreground w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="bg-transparent text-xl font-bold font-numbers text-foreground w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </GlassCard>
         <GlassCard className="py-3 px-4">
@@ -112,7 +109,7 @@ export default function PositionCalculator() {
             value={store.stopLoss}
             onChange={store.setStopLoss}
             step={0.25}
-            className="bg-transparent text-xl font-bold font-mono text-destructive w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="bg-transparent text-xl font-bold font-numbers text-destructive w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </GlassCard>
         <GlassCard className="py-3 px-4">
@@ -121,7 +118,7 @@ export default function PositionCalculator() {
             value={store.targetPrice}
             onChange={store.setTargetPrice}
             step={0.25}
-            className="bg-transparent text-xl font-bold font-mono text-primary w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="bg-transparent text-xl font-bold font-numbers text-success w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </GlassCard>
         <GlassCard className="py-3 px-4">
@@ -130,7 +127,7 @@ export default function PositionCalculator() {
             <NumericInput
               value={store.winRate}
               onChange={store.setWinRate}
-              className="bg-transparent text-xl font-bold font-mono text-foreground w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="bg-transparent text-xl font-bold font-numbers text-foreground w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             <span className="text-muted-foreground text-sm">%</span>
           </div>
@@ -138,12 +135,12 @@ export default function PositionCalculator() {
       </div>
 
       {/* Kelly Toggle */}
-      <div className="flex gap-2 bg-secondary rounded-xl p-1">
+      <div className="flex gap-2 bg-card border border-border rounded-xl p-1">
         <button
           onClick={() => setKellyMode('half')}
           className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
             kellyMode === 'half'
-              ? 'bg-primary text-primary-foreground'
+              ? 'bg-primary text-primary-foreground shadow-sm'
               : 'text-muted-foreground'
           }`}
         >
@@ -153,7 +150,7 @@ export default function PositionCalculator() {
           onClick={() => setKellyMode('quarter')}
           className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
             kellyMode === 'quarter'
-              ? 'bg-primary text-primary-foreground'
+              ? 'bg-primary text-primary-foreground shadow-sm'
               : 'text-muted-foreground'
           }`}
         >
@@ -169,7 +166,7 @@ export default function PositionCalculator() {
             key={contracts}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="text-6xl font-bold text-primary font-mono"
+            className="text-6xl font-bold text-primary font-numbers"
           >
             <AnimatedNumber value={contracts} decimals={0} />
           </motion.div>
@@ -180,13 +177,13 @@ export default function PositionCalculator() {
           <div className="flex justify-center gap-8 mt-6">
             <div>
               <p className="text-[10px] text-muted-foreground uppercase">Risk</p>
-              <p className="text-sm font-bold font-mono text-destructive">
+              <p className="text-sm font-bold font-numbers text-destructive">
                 $<AnimatedNumber value={dollarRisk} decimals={0} />
               </p>
             </div>
             <div>
               <p className="text-[10px] text-muted-foreground uppercase">R Multiple</p>
-              <p className="text-sm font-bold font-mono text-primary">
+              <p className="text-sm font-bold font-numbers text-success">
                 <AnimatedNumber value={result.rMultiple} decimals={1} suffix="R" />
               </p>
             </div>
