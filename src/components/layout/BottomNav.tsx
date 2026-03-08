@@ -175,9 +175,7 @@ export default function BottomNav() {
             backdropFilter: holding ? 'blur(80px) saturate(2.2)' : 'blur(50px) saturate(1.9)',
             WebkitBackdropFilter: holding ? 'blur(80px) saturate(2.2)' : 'blur(50px) saturate(1.9)',
             border: '1px solid rgba(255,255,255,0.14)',
-            boxShadow: holding
-              ? '0 16px 56px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -0.5px 0 rgba(255,255,255,0.06)'
-              : '0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -0.5px 0 rgba(255,255,255,0.04)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -0.5px 0 rgba(255,255,255,0.06)',
           }}
         >
           {/* Specular highlight — top edge shine */}
@@ -189,7 +187,7 @@ export default function BottomNav() {
           />
 
           <div className="flex items-center justify-around relative">
-            {/* SwiftUI-style sliding active pill */}
+          {/* SwiftUI-style sliding active pill */}
             {!holding && activeIndex >= 0 && (
               <motion.div
                 layoutId="active-pill"
@@ -265,19 +263,6 @@ export default function BottomNav() {
                     {tab.label}
                   </motion.span>
 
-                  {/* Active dot indicator */}
-                  <AnimatePresence>
-                    {active && (
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        transition={swiftSpring}
-                        className="absolute -top-0.5 w-1 h-1 rounded-full bg-primary"
-                        style={{ boxShadow: '0 0 6px hsl(var(--primary) / 0.6)' }}
-                      />
-                    )}
-                  </AnimatePresence>
                 </button>
               );
             })}
