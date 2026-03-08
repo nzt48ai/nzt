@@ -263,19 +263,6 @@ export default function BottomNav() {
                     {tab.label}
                   </motion.span>
 
-                  {/* Active dot indicator */}
-                  <AnimatePresence>
-                    {active && (
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        transition={swiftSpring}
-                        className="absolute -top-0.5 w-1 h-1 rounded-full bg-primary"
-                        style={{ boxShadow: '0 0 6px hsl(var(--primary) / 0.6)' }}
-                      />
-                    )}
-                  </AnimatePresence>
                 </button>
               );
             })}

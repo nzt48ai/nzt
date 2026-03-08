@@ -16,6 +16,8 @@ export default {
       fontFamily: {
         sans: ["Manrope", "system-ui", "sans-serif"],
         mono: ["DM Mono", "JetBrains Mono", "SF Mono", "monospace"],
+        numbers: ["-apple-system", "SF Pro Display", "SF Pro Text", "BlinkMacSystemFont", "system-ui", "sans-serif"],
+      },
       },
       colors: {
         border: "hsl(var(--border))",
