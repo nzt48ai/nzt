@@ -70,11 +70,10 @@ export default function PositionCalculator() {
       <div className="grid grid-cols-2 gap-3">
         <GlassCard className="py-3 px-4">
           <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Entry</Label>
-          <input
-            type="number"
+          <NumericInput
             value={store.entryPrice}
+            onChange={store.setEntryPrice}
             step={0.25}
-            onChange={(e) => store.setEntryPrice(Number(e.target.value))}
             className="bg-transparent text-xl font-bold font-mono text-foreground w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </GlassCard>
