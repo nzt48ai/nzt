@@ -98,10 +98,9 @@ export default function PositionCalculator() {
         <GlassCard className="py-3 px-4">
           <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Win Rate</Label>
           <div className="flex items-baseline gap-0.5 mt-1">
-            <input
-              type="number"
+            <NumericInput
               value={store.winRate}
-              onChange={(e) => store.setWinRate(Number(e.target.value))}
+              onChange={store.setWinRate}
               className="bg-transparent text-xl font-bold font-mono text-foreground w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             <span className="text-muted-foreground text-sm">%</span>
