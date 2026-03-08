@@ -79,11 +79,10 @@ export default function PositionCalculator() {
         </GlassCard>
         <GlassCard className="py-3 px-4">
           <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Stop Loss</Label>
-          <input
-            type="number"
+          <NumericInput
             value={store.stopLoss}
+            onChange={store.setStopLoss}
             step={0.25}
-            onChange={(e) => store.setStopLoss(Number(e.target.value))}
             className="bg-transparent text-xl font-bold font-mono text-destructive w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </GlassCard>
