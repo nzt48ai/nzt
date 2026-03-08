@@ -77,6 +77,18 @@ export default function CompoundCalculator() {
 function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
   label: string; value: number; onChange: (v: number) => void; prefix?: string; suffix?: string; step?: number;
 }) {
+  const [raw, setRaw] = useState(String(value));
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value;
+    setRaw(v);
+    onChange(v === '' ? 0 : Number(v));
+  };
+
+  const handleBlur = () => {
+    setRaw(String(value));
+  };
+
   return (
     <div>
       <Label className="text-[10px] text-muted-foreground">{label}</Label>
@@ -84,9 +96,11 @@ function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
         {prefix && <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{prefix}</span>}
         <Input
           type="number"
-          value={value || ''}
+          value={raw}
           step={step}
-          onChange={(e) => onChange(e.target.value === '' ? 0 : Number(e.target.value))}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          onFocus={(e) => e.target.select()}
           className={`bg-secondary border-border font-mono text-sm h-9 ${prefix ? 'pl-6' : ''} ${suffix ? 'pr-6' : ''}`}
         />
         {suffix && <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{suffix}</span>}
