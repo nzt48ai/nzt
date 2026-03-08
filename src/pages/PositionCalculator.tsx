@@ -15,20 +15,26 @@ function NumericInput({ value, onChange, step, className }: {
   value: number; onChange: (v: number) => void; step?: number; className?: string;
 }) {
   const [raw, setRaw] = useState(String(value));
+  const [focused, setFocused] = useState(false);
+
+  // Sync raw with external value changes (e.g. instrument switch) when not focused
+  if (!focused && raw !== String(value)) {
+    setRaw(String(value));
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
     setRaw(v);
     onChange(v === '' ? 0 : Number(v));
   };
-  const handleBlur = () => setRaw(String(value));
   return (
     <input
       type="number"
       value={raw}
       step={step}
       onChange={handleChange}
-      onBlur={handleBlur}
-      onFocus={(e) => e.target.select()}
+      onBlur={() => { setFocused(false); setRaw(String(value)); }}
+      onFocus={(e) => { setFocused(true); e.target.select(); }}
       className={className}
     />
   );
