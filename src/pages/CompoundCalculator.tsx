@@ -122,7 +122,7 @@ export default function CompoundCalculator() {
                     </div>
                     <div className="text-right">
                       <div className={`text-xs font-medium ${
-                        trade.result === 'win' ? 'text-green-600' : 'text-red-600'
+                        trade.result === 'win' ? 'text-success' : 'text-destructive'
                       }`}>
                         {trade.result === 'win' ? '+' : ''}${trade.pnl.toLocaleString()}
                       </div>
