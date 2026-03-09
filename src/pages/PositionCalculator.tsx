@@ -376,31 +376,6 @@ export default function PositionCalculator() {
       {/* Hero Result Card */}
       {result && (
         <GlassCard glow="primary" className="relative text-center py-7 overflow-hidden">
-          {/* Faint equity curve background */}
-          <svg
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            viewBox="0 0 200 80"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <defs>
-              <linearGradient id="eq-grad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.08" />
-                <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M0,60 Q10,55 20,52 T40,48 T60,42 T80,38 T100,35 T120,28 T140,25 T160,20 T180,18 T200,12"
-              fill="none"
-              stroke="hsl(var(--primary))"
-              strokeWidth="0.8"
-              opacity="0.15"
-            />
-            <path
-              d="M0,60 Q10,55 20,52 T40,48 T60,42 T80,38 T100,35 T120,28 T140,25 T160,20 T180,18 T200,12 V80 H0 Z"
-              fill="url(#eq-grad)"
-            />
-          </svg>
 
           {/* Subtle candlestick visualization */}
           <svg
