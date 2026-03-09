@@ -109,8 +109,8 @@ export default function CompoundCalculator() {
                     key={trade.trade}
                     className={`flex items-center justify-between p-2 rounded-lg border transition-colors ${
                       trade.result === 'win' 
-                        ? 'bg-green-500/5 border-green-500/20' 
-                        : 'bg-red-500/5 border-red-500/20'
+                        ? 'bg-success/5 border-success/20' 
+                        : 'bg-destructive/5 border-destructive/20'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -122,7 +122,7 @@ export default function CompoundCalculator() {
                     </div>
                     <div className="text-right">
                       <div className={`text-xs font-medium ${
-                        trade.result === 'win' ? 'text-green-600' : 'text-red-600'
+                        trade.result === 'win' ? 'text-success' : 'text-destructive'
                       }`}>
                         {trade.result === 'win' ? '+' : ''}${trade.pnl.toLocaleString()}
                       </div>
