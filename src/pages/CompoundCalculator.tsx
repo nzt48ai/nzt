@@ -10,14 +10,16 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 export default function CompoundCalculator() {
   const store = useCompoundStore();
 
-  const [showTradeByTrade, setShowTradeByTrade] = useState(false);
+  const [showTradeList, setShowTradeList] = useState(false);
 
   const data12 = useMemo(
-    () => {
-      const calcFn = showTradeByTrade ? calcCompoundGrowth : calcCompoundGrowthExpected;
-      return calcFn(store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth, 12);
-    },
-    [store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth, showTradeByTrade]
+    () => calcCompoundGrowthExpected(store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth, 12),
+    [store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth]
+  );
+
+  const tradeData = useMemo(
+    () => calcTradeByTrade(store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth, 12, 200),
+    [store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth]
   );
 
   const bal6 = data12.find((d) => d.month === 6)?.balance ?? 0;
