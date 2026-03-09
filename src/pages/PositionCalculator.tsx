@@ -33,11 +33,16 @@ const PRICE_DECIMALS: Record<Instrument, number> = {
 
 // Adaptive step tiers based on scroll velocity (px/ms → multiplier of tick)
 // Slow = 1 tick, medium = 4 ticks (1pt), fast = 20 ticks (5pt), very fast = 100 ticks
+// Snap value to nearest tick
+function snapToTick(v: number, tick: number): number {
+  return Math.round(v / tick) * tick;
+}
+
+// Velocity → tick multiplier: slow = 1 tick, medium = 4, fast = 20
 function getAdaptiveSteps(velocity: number): number {
-  if (velocity < 0.3) return 1;
-  if (velocity < 1.0) return 4;
-  if (velocity < 3.0) return 20;
-  return 100;
+  if (velocity < 0.4) return 1;
+  if (velocity < 1.2) return 4;
+  return 20;
 }
 
 const springFast = { type: 'spring' as const, stiffness: 480, damping: 32, mass: 0.6 };
