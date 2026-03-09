@@ -21,9 +21,12 @@ export default function BottomNav() {
     <motion.div
       className="fixed bottom-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-md select-none"
       style={{ x: '-50%' }}
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut', delay: 0.1 }}
     >
       <nav
-        className="relative overflow-hidden rounded-[22px] px-1.5 py-2"
+        className="relative overflow-hidden rounded-[22px] px-1.5 py-2 transition-colors duration-300"
         style={{
           background: 'hsl(var(--glass-bg))',
           borderColor: 'hsl(var(--glass-border))',
@@ -54,18 +57,26 @@ export default function BottomNav() {
           {tabs.map((tab, i) => {
             const active = activeIndex === i;
             return (
-              <button
+              <motion.button
                 key={tab.path}
                 onClick={() => navigate(tab.path)}
                 className="relative flex flex-col items-center gap-0.5 flex-1 py-1.5 rounded-xl"
+                whileTap={{ scale: 0.85 }}
+                whileHover={{ scale: 1.07 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
               >
-                <tab.icon
-                  size={21}
-                  strokeWidth={active ? 2.2 : 1.5}
-                  className={`transition-colors duration-200 ${
-                    active ? 'text-primary' : 'text-muted-foreground'
-                  }`}
-                />
+                <motion.div
+                  animate={active ? { scale: 1.15 } : { scale: 1 }}
+                  transition={spring}
+                >
+                  <tab.icon
+                    size={21}
+                    strokeWidth={active ? 2.2 : 1.5}
+                    className={`transition-colors duration-200 ${
+                      active ? 'text-primary' : 'text-muted-foreground'
+                    }`}
+                  />
+                </motion.div>
                 <span
                   className={`text-[10px] font-semibold transition-colors duration-200 ${
                     active ? 'text-primary' : 'text-muted-foreground'
@@ -73,7 +84,7 @@ export default function BottomNav() {
                 >
                   {tab.label}
                 </span>
-              </button>
+              </motion.button>
             );
           })}
         </div>
