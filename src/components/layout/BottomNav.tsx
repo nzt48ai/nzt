@@ -29,8 +29,7 @@ export default function BottomNav() {
         className="relative overflow-hidden rounded-[22px] px-1.5 py-2 transition-colors duration-300"
         style={{
           background: 'hsl(var(--glass-bg))',
-          borderColor: 'hsl(var(--glass-border))',
-          border: '1px solid',
+          border: '1px solid hsl(var(--glass-border))',
           backdropFilter: 'blur(20px) saturate(180%)',
           WebkitBackdropFilter: 'blur(20px) saturate(180%)',
           boxShadow: '0 8px 32px hsl(220 30% 10% / 0.1), inset 0 1px 0 hsl(0 0% 100% / 0.5)',
