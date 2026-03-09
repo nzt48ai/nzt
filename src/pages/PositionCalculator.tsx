@@ -185,7 +185,7 @@ function PriceInput({ value, onChange, instrument, colorClass, label }: PriceInp
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           className={`bg-transparent font-bold font-numbers w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-ns-resize touch-none leading-none ${colorClass}`}
-          style={{ fontSize: 'clamp(1.35rem, 5.5vw, 1.85rem)' }}
+          style={{ fontSize: 'clamp(1.05rem, 4vw, 1.35rem)' }}
         />
       </div>
     </GlassCard>
