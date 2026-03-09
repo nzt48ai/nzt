@@ -373,68 +373,130 @@ export default function PositionCalculator() {
         </div>
       </div>
 
-      {/* Result Card */}
+      {/* Hero Result Card */}
       {result && (
-        <GlassCard glow="primary" className="text-center py-7">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-2">
-            {kellyMode === 'off' ? 'Manual Position' : 'Suggested Position'}
-          </p>
+        <GlassCard glow="primary" className="relative text-center py-7 overflow-hidden">
+          {/* Faint equity curve background */}
+          <svg
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            viewBox="0 0 200 80"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <defs>
+              <linearGradient id="eq-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.08" />
+                <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M0,60 Q10,55 20,52 T40,48 T60,42 T80,38 T100,35 T120,28 T140,25 T160,20 T180,18 T200,12"
+              fill="none"
+              stroke="hsl(var(--primary))"
+              strokeWidth="0.8"
+              opacity="0.15"
+            />
+            <path
+              d="M0,60 Q10,55 20,52 T40,48 T60,42 T80,38 T100,35 T120,28 T140,25 T160,20 T180,18 T200,12 V80 H0 Z"
+              fill="url(#eq-grad)"
+            />
+          </svg>
 
-          <div className="h-[72px] flex items-center justify-center">
-            {kellyMode === 'off' ? (
-              <motion.div
-                key="manual"
-                initial={{ scale: 0.85, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={springFast}
-                className="flex items-center justify-center"
-              >
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  value={manualContracts === 0 ? '' : manualContracts}
-                  placeholder="0"
-                  onChange={(e) => setManualContracts(Math.max(0, Math.floor(Number(e.target.value) || 0)))}
-                  onFocus={(e) => e.target.select()}
-                  className="bg-transparent text-6xl font-bold text-primary font-numbers text-center outline-none w-36 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-primary/30"
+          {/* Subtle candlestick visualization */}
+          <svg
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            viewBox="0 0 200 80"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            {[
+              { x: 15, o: 55, c: 48, h: 45, l: 58, bull: true },
+              { x: 30, o: 50, c: 53, h: 47, l: 56, bull: false },
+              { x: 45, o: 48, c: 42, h: 39, l: 50, bull: true },
+              { x: 60, o: 44, c: 46, h: 41, l: 49, bull: false },
+              { x: 75, o: 42, c: 36, h: 33, l: 44, bull: true },
+              { x: 90, o: 38, c: 40, h: 35, l: 43, bull: false },
+              { x: 105, o: 36, c: 30, h: 27, l: 38, bull: true },
+              { x: 120, o: 32, c: 28, h: 25, l: 34, bull: true },
+              { x: 135, o: 30, c: 33, h: 28, l: 36, bull: false },
+              { x: 150, o: 28, c: 22, h: 19, l: 30, bull: true },
+              { x: 165, o: 24, c: 20, h: 17, l: 26, bull: true },
+              { x: 180, o: 22, c: 18, h: 15, l: 24, bull: true },
+            ].map((c, i) => (
+              <g key={i} opacity="0.07">
+                <line x1={c.x} y1={c.h} x2={c.x} y2={c.l} stroke="hsl(var(--foreground))" strokeWidth="0.5" />
+                <rect
+                  x={c.x - 3}
+                  y={Math.min(c.o, c.c)}
+                  width={6}
+                  height={Math.abs(c.o - c.c) || 1}
+                  fill={c.bull ? 'hsl(var(--success))' : 'hsl(var(--destructive))'}
                 />
-              </motion.div>
-            ) : (
-              <motion.div
-                key={`${contracts}-${kellyMode}`}
-                initial={{ scale: 0.85, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={springFast}
-                className="text-6xl font-bold text-primary font-numbers"
-              >
-                <AnimatedNumber value={contracts} decimals={0} />
-              </motion.div>
-            )}
-          </div>
+              </g>
+            ))}
+          </svg>
 
-          <p className="text-sm text-muted-foreground mt-1">
-            {contracts === 1 ? 'contract' : 'contracts'}
-          </p>
+          <div className="relative z-10">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-2">
+              {kellyMode === 'off' ? 'Manual Position' : 'Suggested Position'}
+            </p>
 
-          <div className="grid grid-cols-3 gap-4 mt-5 pt-5 border-t" style={{ borderColor: 'hsl(var(--glass-border))' }}>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-1">Risk</p>
-              <p className="text-sm font-bold font-numbers text-destructive">
-                <AnimatedNumber value={dollarRisk} prefix="$" decimals={0} />
-              </p>
+            <div className="h-[72px] flex items-center justify-center">
+              {kellyMode === 'off' ? (
+                <motion.div
+                  key="manual"
+                  initial={{ scale: 0.85, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={springFast}
+                  className="flex items-center justify-center"
+                >
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    value={manualContracts === 0 ? '' : manualContracts}
+                    placeholder="0"
+                    onChange={(e) => setManualContracts(Math.max(0, Math.floor(Number(e.target.value) || 0)))}
+                    onFocus={(e) => e.target.select()}
+                    className="bg-transparent text-6xl font-bold text-gradient font-numbers text-center outline-none w-36 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-primary/30"
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={`${contracts}-${kellyMode}`}
+                  initial={{ scale: 0.85, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={springFast}
+                  className="text-6xl font-bold text-gradient font-numbers"
+                >
+                  <AnimatedNumber value={contracts} decimals={0} />
+                </motion.div>
+              )}
             </div>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-1">Return</p>
-              <p className="text-sm font-bold font-numbers text-success">
-                <AnimatedNumber value={dollarReturn} prefix="$" decimals={0} />
-              </p>
-            </div>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-1">R:R</p>
-              <p className="text-sm font-bold font-numbers text-foreground">
-                <AnimatedNumber value={result.rMultiple} decimals={1} suffix="R" />
-              </p>
+
+            <p className="text-sm text-muted-foreground mt-1">
+              {contracts === 1 ? 'contract' : 'contracts'}
+            </p>
+
+            <div className="grid grid-cols-3 gap-4 mt-5 pt-5 border-t" style={{ borderColor: 'hsl(var(--glass-border))' }}>
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-1">Risk</p>
+                <p className="text-sm font-bold font-numbers text-destructive">
+                  <AnimatedNumber value={dollarRisk} prefix="$" decimals={0} />
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-1">Return</p>
+                <p className="text-sm font-bold font-numbers text-success">
+                  <AnimatedNumber value={dollarReturn} prefix="$" decimals={0} />
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-1">R:R</p>
+                <p className="text-sm font-bold font-numbers text-foreground">
+                  <AnimatedNumber value={result.rMultiple} decimals={1} suffix="R" />
+                </p>
+              </div>
             </div>
           </div>
         </GlassCard>
