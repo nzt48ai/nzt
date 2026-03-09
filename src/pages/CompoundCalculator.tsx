@@ -17,7 +17,6 @@ export default function CompoundCalculator() {
 
   const bal6 = data36.find((d) => d.month === 6)?.balance ?? 0;
   const bal12 = data36.find((d) => d.month === 12)?.balance ?? 0;
-  const bal36 = data36[data36.length - 1]?.balance ?? 0;
 
   return (
     <div className="space-y-4">
@@ -38,11 +37,10 @@ export default function CompoundCalculator() {
         </div>
       </GlassCard>
 
-      {/* Projections */}
-      <div className="grid grid-cols-3 gap-2">
+      {/* Projections — 2 cards only */}
+      <div className="grid grid-cols-2 gap-2">
         <ProjectionCard label="6 Months" value={bal6} />
         <ProjectionCard label="1 Year" value={bal12} />
-        <ProjectionCard label="3 Years" value={bal36} />
       </div>
 
       {/* Equity Curve */}
@@ -97,9 +95,9 @@ function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
 
   return (
     <div>
-      <Label className="text-[10px] text-muted-foreground">{label}</Label>
+      <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">{label}</Label>
       <div className="relative mt-0.5">
-        {prefix && <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground z-10">{prefix}</span>}
+        {prefix && <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/70 z-10">{prefix}</span>}
         <input
           type="number"
           value={raw}
@@ -112,13 +110,13 @@ function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
             ${prefix ? 'pl-6' : ''} ${suffix ? 'pr-6' : ''}
             focus:ring-1 focus:ring-primary/40`}
           style={{
-            background: 'hsl(0 0% 100% / 0.4)',
-            border: '1px solid hsl(0 0% 100% / 0.5)',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
+            background: 'hsl(var(--glass-bg))',
+            border: '1px solid hsl(var(--glass-border))',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
           }}
         />
-        {suffix && <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{suffix}</span>}
+        {suffix && <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/70">{suffix}</span>}
       </div>
     </div>
   );
@@ -126,9 +124,9 @@ function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
 
 function ProjectionCard({ label, value }: { label: string; value: number }) {
   return (
-    <GlassCard glow="primary" className="text-center">
-      <p className="text-[10px] text-muted-foreground">{label}</p>
-      <p className="text-sm font-bold font-numbers text-primary mt-1">
+    <GlassCard glow="primary" className="text-center overflow-hidden">
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">{label}</p>
+      <p className="text-sm font-bold font-numbers text-primary mt-1 truncate min-w-0">
         <AnimatedNumber value={value} prefix="$" decimals={0} />
       </p>
     </GlassCard>
