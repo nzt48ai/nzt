@@ -195,6 +195,7 @@ function PriceInput({ value, onChange, instrument, colorClass, label }: PriceInp
 export default function PositionCalculator() {
   const store = usePositionStore();
   const [kellyMode, setKellyMode] = useState<KellyMode>('half');
+  const [manualContracts, setManualContracts] = useState(1);
   const activeIndex = instruments.indexOf(store.instrument);
 
   const result = useMemo(
@@ -202,7 +203,7 @@ export default function PositionCalculator() {
     [store.instrument, store.balance, store.entryPrice, store.stopLoss, store.targetPrice, store.winRate]
   );
 
-  const contracts = result
+  const kellyContracts = result
     ? kellyMode === 'full'
       ? Math.max(0, Math.floor(store.balance * (result.kellyPercent / 100) / result.riskPerContract))
       : kellyMode === 'half'
@@ -211,6 +212,8 @@ export default function PositionCalculator() {
       ? result.quarterKellyContracts
       : 0
     : 0;
+
+  const contracts = kellyMode === 'off' ? manualContracts : kellyContracts;
 
   const dollarRisk = result ? contracts * result.riskPerContract : 0;
   const dollarReturn = result ? contracts * result.rewardPoints * POINT_VALUES[store.instrument] : 0;
