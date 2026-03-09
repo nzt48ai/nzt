@@ -377,7 +377,6 @@ export default function PositionCalculator() {
       {/* Result Card */}
       {result && (
         <GlassCard glow="primary" className="text-center py-7">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-2">Suggested Position</p>
           <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-2">
             {kellyMode === 'off' ? 'Manual Position' : 'Suggested Position'}
           </p>
