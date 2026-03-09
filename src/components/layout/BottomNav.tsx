@@ -30,20 +30,22 @@ export default function BottomNav() {
         style={{
           background: 'hsl(var(--glass-bg))',
           border: '1px solid hsl(var(--glass-border))',
-          backdropFilter: 'blur(20px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-          boxShadow: '0 8px 32px hsl(220 30% 10% / 0.1), inset 0 1px 0 hsl(0 0% 100% / 0.5)',
+          backdropFilter: 'blur(24px) saturate(200%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(200%)',
+          boxShadow:
+            '0 8px 40px hsl(220 30% 10% / 0.15), 0 2px 10px hsl(220 30% 10% / 0.08), inset 0 1px 0 hsl(0 0% 100% / 0.5), inset 0 -1px 0 hsl(0 0% 100% / 0.05)',
         }}
       >
         <div className="flex items-center justify-around relative">
-          {/* Sliding active pill */}
+          {/* Sliding active pill with glow */}
           {activeIndex >= 0 && (
             <motion.div
               layoutId="active-pill"
               className="absolute rounded-xl pointer-events-none"
               style={{
                 background: 'hsl(var(--primary) / 0.12)',
-                border: '1px solid hsl(var(--primary) / 0.2)',
+                border: '1px solid hsl(var(--primary) / 0.25)',
+                boxShadow: '0 0 16px hsl(var(--primary) / 0.2), 0 0 4px hsl(var(--primary) / 0.1)',
                 width: `${100 / tabs.length}%`,
                 left: `${(activeIndex / tabs.length) * 100}%`,
                 top: 0,
@@ -60,17 +62,16 @@ export default function BottomNav() {
                 key={tab.path}
                 onClick={() => navigate(tab.path)}
                 className="relative flex flex-col items-center gap-0.5 flex-1 py-1.5 rounded-xl"
-                whileTap={{ scale: 0.85 }}
-                whileHover={{ scale: 1.07 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                whileTap={{ scale: 0.82, transition: { duration: 0.08 } }}
+                whileHover={{ scale: 1.08, transition: { type: 'spring', stiffness: 400, damping: 18 } }}
               >
                 <motion.div
-                  animate={active ? { scale: 1.15 } : { scale: 1 }}
+                  animate={active ? { scale: 1.18, filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))' } : { scale: 1, filter: 'drop-shadow(0 0 0px transparent)' }}
                   transition={spring}
                 >
                   <tab.icon
                     size={21}
-                    strokeWidth={active ? 2.2 : 1.5}
+                    strokeWidth={active ? 2.3 : 1.5}
                     className={`transition-colors duration-200 ${
                       active ? 'text-primary' : 'text-muted-foreground'
                     }`}
