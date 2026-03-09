@@ -49,9 +49,9 @@ export default function CompoundCalculator() {
 
       {/* 3 inputs in a row */}
       <div className="grid grid-cols-3 gap-2.5">
-        <CompactInput label="Win Rate" suffix="%" value={store.winRate} onChange={store.setWinRate} />
-        <CompactInput label="Risk %" suffix="%" value={store.riskPercent} onChange={store.setRiskPercent} step={0.5} />
-        <CompactInput label="Avg R" suffix="R" value={store.avgRMultiple} onChange={store.setAvgRMultiple} step={0.1} />
+        <CompactInput label="Win Rate" suffix="" value={store.winRate} onChange={store.setWinRate} />
+        <CompactInput label="Risk %" suffix="" value={store.riskPercent} onChange={store.setRiskPercent} step={0.5} />
+        <CompactInput label="Avg R" suffix="" value={store.avgRMultiple} onChange={store.setAvgRMultiple} step={0.1} />
       </div>
 
       {/* Trades per month — inline row like win rate in position tab */}
