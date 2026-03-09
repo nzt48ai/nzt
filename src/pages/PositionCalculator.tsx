@@ -92,23 +92,22 @@ function PriceInput({ value, onChange, instrument, colorClass, label }: PriceInp
     const clamped = clamp(next);
     animRef.current = animate(animVal, clamped, {
       type: 'spring',
-      stiffness: 600,
-      damping: 38,
-      mass: 0.4,
-      onUpdate: (v) => setRaw(v.toFixed(decimals)),
+      stiffness: 520,
+      damping: 42,
+      mass: 0.5,
+      onUpdate: (v) => setRaw(snapToTick(v, tick).toFixed(decimals)),
       onComplete: () => {
         isAnimating.current = false;
         setRaw(fmt(clamped));
       },
     });
     onChange(clamped);
-  }, [animVal, decimals, fmt, onChange]);
+  }, [animVal, decimals, fmt, tick, onChange]);
 
   const handleWheel = useCallback((e: React.WheelEvent<HTMLInputElement>) => {
     e.preventDefault();
     const now = performance.now();
     const dt = now - lastWheelTime.current;
-    // Velocity in px/ms (use abs deltaY)
     const rawDelta = Math.abs(e.deltaY);
     const velocity = dt > 0 ? rawDelta / dt : 0;
     lastWheelTime.current = now;
@@ -116,7 +115,8 @@ function PriceInput({ value, onChange, instrument, colorClass, label }: PriceInp
 
     const steps = getAdaptiveSteps(velocity);
     const dir = e.deltaY < 0 ? 1 : -1;
-    const next = parseFloat((value + dir * steps * tick).toFixed(4));
+    // Always snap result to tick grid
+    const next = snapToTick(value + dir * steps * tick, tick);
     smoothTo(next);
   }, [value, tick, smoothTo]);
 
