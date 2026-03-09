@@ -381,36 +381,38 @@ export default function PositionCalculator() {
             {kellyMode === 'off' ? 'Manual Position' : 'Suggested Position'}
           </p>
 
-          {kellyMode === 'off' ? (
-            <motion.div
-              key="manual"
-              initial={{ scale: 0.85, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={springFast}
-              className="flex items-center justify-center"
-            >
-              <input
-                type="number"
-                inputMode="numeric"
-                min={0}
-                value={manualContracts === 0 ? '' : manualContracts}
-                placeholder="0"
-                onChange={(e) => setManualContracts(Math.max(0, Math.floor(Number(e.target.value) || 0)))}
-                onFocus={(e) => e.target.select()}
-                className="bg-transparent text-6xl font-bold text-primary font-numbers text-center outline-none w-36 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-primary/30"
-              />
-            </motion.div>
-          ) : (
-            <motion.div
-              key={`${contracts}-${kellyMode}`}
-              initial={{ scale: 0.85, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={springFast}
-              className="text-6xl font-bold text-primary font-numbers"
-            >
-              <AnimatedNumber value={contracts} decimals={0} />
-            </motion.div>
-          )}
+          <div className="h-[72px] flex items-center justify-center">
+            {kellyMode === 'off' ? (
+              <motion.div
+                key="manual"
+                initial={{ scale: 0.85, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={springFast}
+                className="flex items-center justify-center"
+              >
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  value={manualContracts === 0 ? '' : manualContracts}
+                  placeholder="0"
+                  onChange={(e) => setManualContracts(Math.max(0, Math.floor(Number(e.target.value) || 0)))}
+                  onFocus={(e) => e.target.select()}
+                  className="bg-transparent text-6xl font-bold text-primary font-numbers text-center outline-none w-36 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-primary/30"
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key={`${contracts}-${kellyMode}`}
+                initial={{ scale: 0.85, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={springFast}
+                className="text-6xl font-bold text-primary font-numbers"
+              >
+                <AnimatedNumber value={contracts} decimals={0} />
+              </motion.div>
+            )}
+          </div>
 
           <p className="text-sm text-muted-foreground mt-1">
             {contracts === 1 ? 'contract' : 'contracts'}
