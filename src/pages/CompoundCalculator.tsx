@@ -214,18 +214,17 @@ function CompactInput({ label, value, onChange, suffix, step = 1 }: {
 }
 
 function ProjectionCard({ label, value }: { label: string; value: number }) {
-  const formattedValue = value >= 1_000_000 
-    ? `$${(value / 1_000_000).toFixed(2)}M` 
-    : value >= 1_000 
-    ? `$${(value / 1_000).toFixed(1)}k` 
-    : `$${value.toLocaleString()}`;
-
   return (
     <GlassCard glow="primary" className="text-center overflow-hidden">
       <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">{label}</p>
-      <p className="text-sm font-bold font-numbers text-primary mt-1 truncate min-w-0">
-        {formattedValue}
-      </p>
+      <div className="text-sm font-bold font-numbers text-primary mt-1 truncate min-w-0">
+        <AnimatedNumber 
+          value={value} 
+          prefix="$" 
+          decimals={value >= 1_000_000 ? 2 : value >= 1_000 ? 1 : 0}
+          suffix={value >= 1_000_000 ? 'M' : value >= 1_000 ? 'k' : ''}
+        />
+      </div>
     </GlassCard>
   );
 }
