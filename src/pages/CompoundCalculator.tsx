@@ -109,8 +109,8 @@ export default function CompoundCalculator() {
                     key={trade.trade}
                     className={`flex items-center justify-between p-2 rounded-lg border transition-colors ${
                       trade.result === 'win' 
-                        ? 'bg-green-500/5 border-green-500/20' 
-                        : 'bg-red-500/5 border-red-500/20'
+                        ? 'bg-success/5 border-success/20' 
+                        : 'bg-destructive/5 border-destructive/20'
                     }`}
                   >
                     <div className="flex items-center gap-3">
