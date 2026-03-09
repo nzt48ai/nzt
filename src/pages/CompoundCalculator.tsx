@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCompoundStore } from '@/stores/calculatorStore';
-import { calcCompoundGrowthExpected } from '@/lib/calculations';
+import { calcCompoundGrowthExpected, calcCompoundGrowth } from '@/lib/calculations';
 import GlassCard from '@/components/ui/GlassCard';
 import AnimatedNumber from '@/components/ui/AnimatedNumber';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
