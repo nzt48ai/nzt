@@ -95,9 +95,9 @@ function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
 
   return (
     <div>
-      <Label className="text-[10px] text-muted-foreground">{label}</Label>
+      <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">{label}</Label>
       <div className="relative mt-0.5">
-        {prefix && <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground z-10">{prefix}</span>}
+        {prefix && <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/70 z-10">{prefix}</span>}
         <input
           type="number"
           value={raw}
@@ -110,13 +110,13 @@ function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
             ${prefix ? 'pl-6' : ''} ${suffix ? 'pr-6' : ''}
             focus:ring-1 focus:ring-primary/40`}
           style={{
-            background: 'hsl(0 0% 100% / 0.4)',
-            border: '1px solid hsl(0 0% 100% / 0.5)',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
+            background: 'hsl(var(--glass-bg))',
+            border: '1px solid hsl(var(--glass-border))',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
           }}
         />
-        {suffix && <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{suffix}</span>}
+        {suffix && <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/70">{suffix}</span>}
       </div>
     </div>
   );
