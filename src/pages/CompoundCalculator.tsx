@@ -28,9 +28,8 @@ export default function CompoundCalculator() {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="pt-1">
-        <h1 className="text-2xl font-bold text-foreground">Compound Growth</h1>
-        <p className="text-xs text-muted-foreground mt-0.5">Simulate account growth over time</p>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <h1 className="text-xl font-bold text-gradient">Compound Growth</h1>
       </motion.div>
 
       {/* Starting Balance — big centered card like Position tab */}

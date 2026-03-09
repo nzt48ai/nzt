@@ -221,9 +221,8 @@ export default function PositionCalculator() {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="pt-1">
-        <h1 className="text-2xl font-bold text-foreground">Position Sizer</h1>
-        <p className="text-xs text-muted-foreground mt-0.5">Kelly-based contract sizing</p>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <h1 className="text-xl font-bold text-gradient">Position Sizer</h1>
       </motion.div>
 
       {/* Instrument Selector */}

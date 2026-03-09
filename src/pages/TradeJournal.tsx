@@ -7,7 +7,6 @@ export default function TradeJournal() {
     <div className="space-y-4">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <h1 className="text-xl font-bold text-gradient">Trade Journal</h1>
-        <p className="text-xs text-muted-foreground mt-0.5">Log and review your trades</p>
       </motion.div>
       <GlassCard className="flex flex-col items-center py-12">
         <BookOpen size={48} className="text-muted-foreground mb-3" />
