@@ -375,43 +375,8 @@ export default function PositionCalculator() {
 
       {/* Hero Result Card */}
       {result && (
-        <GlassCard glow="primary" className="relative text-center py-7 overflow-hidden">
-
-          {/* Subtle candlestick visualization */}
-          <svg
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            viewBox="0 0 200 80"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            {[
-              { x: 15, o: 55, c: 48, h: 45, l: 58, bull: true },
-              { x: 30, o: 50, c: 53, h: 47, l: 56, bull: false },
-              { x: 45, o: 48, c: 42, h: 39, l: 50, bull: true },
-              { x: 60, o: 44, c: 46, h: 41, l: 49, bull: false },
-              { x: 75, o: 42, c: 36, h: 33, l: 44, bull: true },
-              { x: 90, o: 38, c: 40, h: 35, l: 43, bull: false },
-              { x: 105, o: 36, c: 30, h: 27, l: 38, bull: true },
-              { x: 120, o: 32, c: 28, h: 25, l: 34, bull: true },
-              { x: 135, o: 30, c: 33, h: 28, l: 36, bull: false },
-              { x: 150, o: 28, c: 22, h: 19, l: 30, bull: true },
-              { x: 165, o: 24, c: 20, h: 17, l: 26, bull: true },
-              { x: 180, o: 22, c: 18, h: 15, l: 24, bull: true },
-            ].map((c, i) => (
-              <g key={i} opacity="0.07">
-                <line x1={c.x} y1={c.h} x2={c.x} y2={c.l} stroke="hsl(var(--foreground))" strokeWidth="0.5" />
-                <rect
-                  x={c.x - 3}
-                  y={Math.min(c.o, c.c)}
-                  width={6}
-                  height={Math.abs(c.o - c.c) || 1}
-                  fill={c.bull ? 'hsl(var(--success))' : 'hsl(var(--destructive))'}
-                />
-              </g>
-            ))}
-          </svg>
-
-          <div className="relative z-10">
+        <GlassCard glow="primary" className="relative text-center py-7">
+          <div>
             <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-2">
               {kellyMode === 'off' ? 'Manual Position' : 'Suggested Position'}
             </p>
