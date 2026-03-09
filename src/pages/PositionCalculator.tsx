@@ -160,7 +160,7 @@ function PriceInput({ value, onChange, instrument, colorClass, label }: PriceInp
 
   return (
     <GlassCard className="flex flex-col p-0 overflow-hidden">
-      <div className="px-3 pt-2.5 pb-0">
+      <div className="px-3 pt-2.5 pb-0 text-center">
         <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">{label}</span>
       </div>
       <div className="flex-1 flex items-center justify-center px-3 pb-3 pt-1">
@@ -377,7 +377,6 @@ export default function PositionCalculator() {
       {/* Result Card */}
       {result && (
         <GlassCard glow="primary" className="text-center py-7">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-2">Suggested Position</p>
           <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-2">
             {kellyMode === 'off' ? 'Manual Position' : 'Suggested Position'}
           </p>
