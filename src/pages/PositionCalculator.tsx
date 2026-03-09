@@ -319,12 +319,10 @@ export default function PositionCalculator() {
         />
       </div>
 
-      {/* Win Rate */}
-      <GlassCard className="flex flex-col p-0 overflow-hidden">
-        <div className="px-3 pt-2.5">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">Win Rate</span>
-        </div>
-        <div className="flex-1 flex items-end px-3 pb-3 pt-1 gap-0.5">
+      {/* Win Rate — compact inline row */}
+      <GlassCard className="flex items-center justify-between px-4 py-3">
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">Win Rate</span>
+        <div className="flex items-baseline gap-0.5">
           <input
             type="number"
             inputMode="decimal"
@@ -333,10 +331,9 @@ export default function PositionCalculator() {
             value={store.winRate}
             onChange={(e) => store.setWinRate(Math.min(100, Math.max(0, Number(e.target.value))))}
             onFocus={(e) => e.target.select()}
-            className="bg-transparent font-bold font-numbers text-foreground w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none leading-none"
-            style={{ fontSize: 'clamp(1.35rem, 5.5vw, 1.85rem)' }}
+            className="bg-transparent text-base font-bold font-numbers text-foreground w-10 text-right outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
-          <span className="text-muted-foreground text-base font-semibold pb-0.5">%</span>
+          <span className="text-sm text-muted-foreground font-medium">%</span>
         </div>
       </GlassCard>
 
