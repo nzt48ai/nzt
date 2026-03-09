@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCompoundStore } from '@/stores/calculatorStore';
-import { calcCompoundGrowthExpected } from '@/lib/calculations';
+import { calcCompoundGrowthExpected, calcCompoundGrowth } from '@/lib/calculations';
 import GlassCard from '@/components/ui/GlassCard';
 import AnimatedNumber from '@/components/ui/AnimatedNumber';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -9,13 +9,18 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 export default function CompoundCalculator() {
   const store = useCompoundStore();
 
-  const data36 = useMemo(
-    () => calcCompoundGrowthExpected(store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth, 36),
-    [store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth]
+  const [showTradeByTrade, setShowTradeByTrade] = useState(false);
+
+  const data12 = useMemo(
+    () => {
+      const calcFn = showTradeByTrade ? calcCompoundGrowth : calcCompoundGrowthExpected;
+      return calcFn(store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth, 12);
+    },
+    [store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth, showTradeByTrade]
   );
 
-  const bal6 = data36.find((d) => d.month === 6)?.balance ?? 0;
-  const bal12 = data36.find((d) => d.month === 12)?.balance ?? 0;
+  const bal6 = data12.find((d) => d.month === 6)?.balance ?? 0;
+  const bal12 = data12.find((d) => d.month === 12)?.balance ?? 0;
 
   return (
     <div className="space-y-4">
@@ -44,9 +49,9 @@ export default function CompoundCalculator() {
 
       {/* 3 inputs in a row */}
       <div className="grid grid-cols-3 gap-2.5">
-        <CompactInput label="Win Rate" suffix="%" value={store.winRate} onChange={store.setWinRate} />
-        <CompactInput label="Risk %" suffix="%" value={store.riskPercent} onChange={store.setRiskPercent} step={0.5} />
-        <CompactInput label="Avg R" suffix="R" value={store.avgRMultiple} onChange={store.setAvgRMultiple} step={0.1} />
+        <CompactInput label="Win Rate" suffix="" value={store.winRate} onChange={store.setWinRate} />
+        <CompactInput label="Risk %" suffix="" value={store.riskPercent} onChange={store.setRiskPercent} step={0.5} />
+        <CompactInput label="Avg R" suffix="" value={store.avgRMultiple} onChange={store.setAvgRMultiple} step={0.1} />
       </div>
 
       {/* Trades per month — inline row like win rate in position tab */}
@@ -73,10 +78,26 @@ export default function CompoundCalculator() {
 
       {/* Equity Curve — full width */}
       <GlassCard>
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-2">Projected Equity Curve</p>
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">Projected Equity Curve</p>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-medium text-muted-foreground">Deterministic</span>
+            <button
+              onClick={() => setShowTradeByTrade(!showTradeByTrade)}
+              className={`w-8 h-4 rounded-full p-0.5 transition-colors duration-200 ${showTradeByTrade ? 'bg-primary' : 'bg-muted/50'}`}
+            >
+              <motion.div
+                className="w-3 h-3 bg-white rounded-full shadow-sm"
+                animate={{ x: showTradeByTrade ? 16 : 0 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              />
+            </button>
+            <span className="text-[10px] font-medium text-muted-foreground">Random Walk</span>
+          </div>
+        </div>
         <div className="h-52">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data36}>
+            <AreaChart data={data12}>
               <defs>
                 <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
@@ -150,11 +171,17 @@ function CompactInput({ label, value, onChange, suffix, step = 1 }: {
 }
 
 function ProjectionCard({ label, value }: { label: string; value: number }) {
+  const formattedValue = value >= 1_000_000 
+    ? `$${(value / 1_000_000).toFixed(2)}M` 
+    : value >= 1_000 
+    ? `$${(value / 1_000).toFixed(1)}k` 
+    : `$${value.toLocaleString()}`;
+
   return (
     <GlassCard glow="primary" className="text-center overflow-hidden">
       <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">{label}</p>
       <p className="text-sm font-bold font-numbers text-primary mt-1 truncate min-w-0">
-        ${value.toLocaleString()}
+        {formattedValue}
       </p>
     </GlassCard>
   );
