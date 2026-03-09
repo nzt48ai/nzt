@@ -163,7 +163,7 @@ function PriceInput({ value, onChange, instrument, colorClass, label }: PriceInp
       <div className="px-3 pt-2.5 pb-0">
         <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">{label}</span>
       </div>
-      <div className="flex-1 flex items-end px-3 pb-3 pt-1">
+      <div className="flex-1 flex items-center justify-center px-3 pb-3 pt-1">
         <input
           type="number"
           inputMode="decimal"
@@ -184,7 +184,7 @@ function PriceInput({ value, onChange, instrument, colorClass, label }: PriceInp
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
-          className={`bg-transparent font-bold font-numbers w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-ns-resize touch-none leading-none ${colorClass}`}
+          className={`bg-transparent font-medium font-numbers w-full text-center outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-ns-resize touch-none leading-none ${colorClass}`}
           style={{ fontSize: 'clamp(1.05rem, 4vw, 1.35rem)' }}
         />
       </div>
@@ -394,10 +394,11 @@ export default function PositionCalculator() {
                 type="number"
                 inputMode="numeric"
                 min={0}
-                value={manualContracts}
-                onChange={(e) => setManualContracts(Math.max(0, Math.floor(Number(e.target.value))))}
+                value={manualContracts === 0 ? '' : manualContracts}
+                placeholder="0"
+                onChange={(e) => setManualContracts(Math.max(0, Math.floor(Number(e.target.value) || 0)))}
                 onFocus={(e) => e.target.select()}
-                className="bg-transparent text-6xl font-bold text-primary font-numbers text-center outline-none w-36 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-b-2 border-primary/40 focus:border-primary transition-colors"
+                className="bg-transparent text-6xl font-bold text-primary font-numbers text-center outline-none w-36 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-primary/30"
               />
             </motion.div>
           ) : (
