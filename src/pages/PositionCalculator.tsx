@@ -242,9 +242,9 @@ export default function PositionCalculator() {
               layoutId="inst-pill"
               className="absolute rounded-xl pointer-events-none"
               style={{
-                background: 'linear-gradient(135deg, hsl(var(--primary) / 0.18), hsl(var(--accent) / 0.12))',
+                background: 'hsl(var(--primary) / 0.12)',
                 border: '1px solid hsl(var(--primary) / 0.25)',
-                boxShadow: '0 0 20px hsl(var(--primary) / 0.15), inset 0 1px 0 hsl(0 0% 100% / 0.15)',
+                boxShadow: '0 0 16px hsl(var(--primary) / 0.2), 0 0 4px hsl(var(--primary) / 0.1)',
                 width: `${100 / instruments.length}%`,
                 left: `${(activeIndex / instruments.length) * 100}%`,
                 top: 0,
