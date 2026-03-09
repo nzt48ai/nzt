@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCompoundStore } from '@/stores/calculatorStore';
-import { calcCompoundGrowthExpected, calcCompoundGrowth } from '@/lib/calculations';
+import { calcCompoundGrowthExpected, calcCompoundGrowth, calcTradeByTrade } from '@/lib/calculations';
 import GlassCard from '@/components/ui/GlassCard';
 import AnimatedNumber from '@/components/ui/AnimatedNumber';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function CompoundCalculator() {
