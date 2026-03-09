@@ -82,54 +82,94 @@ export default function CompoundCalculator() {
       {/* Equity Curve — full width */}
       <GlassCard>
         <div className="flex items-center justify-between mb-4">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">Projected Equity Curve</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">
+            {showTradeList ? 'Trade by Trade Results' : 'Projected Equity Curve'}
+          </p>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-medium text-muted-foreground">Deterministic</span>
+            <span className="text-[10px] font-medium text-muted-foreground">Graph</span>
             <button
-              onClick={() => setShowTradeByTrade(!showTradeByTrade)}
-              className={`w-8 h-4 rounded-full p-0.5 transition-colors duration-200 ${showTradeByTrade ? 'bg-primary' : 'bg-muted/50'}`}
+              onClick={() => setShowTradeList(!showTradeList)}
+              className={`w-8 h-4 rounded-full p-0.5 transition-colors duration-200 ${showTradeList ? 'bg-primary' : 'bg-muted/50'}`}
             >
               <motion.div
                 className="w-3 h-3 bg-white rounded-full shadow-sm"
-                animate={{ x: showTradeByTrade ? 16 : 0 }}
+                animate={{ x: showTradeList ? 16 : 0 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               />
             </button>
-            <span className="text-[10px] font-medium text-muted-foreground">Random Walk</span>
+            <span className="text-[10px] font-medium text-muted-foreground">List</span>
           </div>
         </div>
-        <div className="h-52">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data12}>
-              <defs>
-                <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.02} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="month" tick={{ fontSize: 10, fill: 'hsl(220,10%,50%)' }} tickFormatter={(v) => `M${v}`} />
-              <YAxis
-                tick={{ fontSize: 10, fill: 'hsl(220,10%,50%)' }}
-                tickFormatter={(v: number) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(1)}M` : v >= 1_000 ? `$${(v / 1_000).toFixed(0)}k` : `$${v}`}
-                width={55}
-              />
-              <Tooltip
-                contentStyle={{
-                  background: 'hsl(var(--glass-bg))',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid hsl(var(--glass-border))',
-                  borderRadius: '12px',
-                  fontSize: '12px',
-                  boxShadow: '0 4px 24px hsl(220 30% 10% / 0.1)',
-                }}
-                formatter={(v: number) => [`$${v.toLocaleString()}`, 'Balance']}
-                labelFormatter={(v) => `Month ${v}`}
-              />
-              <Area type="monotone" dataKey="balance" stroke="hsl(var(--primary))" fill="url(#equityGrad)" strokeWidth={2} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
+        
+        {showTradeList ? (
+          <div className="h-52">
+            <ScrollArea className="h-full">
+              <div className="space-y-1 pr-2">
+                {tradeData.map((trade) => (
+                  <div
+                    key={trade.trade}
+                    className={`flex items-center justify-between p-2 rounded-lg border transition-colors ${
+                      trade.result === 'win' 
+                        ? 'bg-green-500/5 border-green-500/20' 
+                        : 'bg-red-500/5 border-red-500/20'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-medium text-muted-foreground w-8">#{trade.trade}</span>
+                      <div className="text-[10px]">
+                        <div className="text-muted-foreground/70">Before: ${trade.before.toLocaleString()}</div>
+                        <div className="text-foreground font-medium">After: ${trade.after.toLocaleString()}</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className={`text-xs font-medium ${
+                        trade.result === 'win' ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {trade.result === 'win' ? '+' : ''}${trade.pnl.toLocaleString()}
+                      </div>
+                      <div className="text-[9px] text-muted-foreground/70 uppercase">
+                        {trade.result}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        ) : (
+          <div className="h-52">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data12}>
+                <defs>
+                  <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="month" tick={{ fontSize: 10, fill: 'hsl(220,10%,50%)' }} tickFormatter={(v) => `M${v}`} />
+                <YAxis
+                  tick={{ fontSize: 10, fill: 'hsl(220,10%,50%)' }}
+                  tickFormatter={(v: number) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(1)}M` : v >= 1_000 ? `$${(v / 1_000).toFixed(0)}k` : `$${v}`}
+                  width={55}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: 'hsl(var(--glass-bg))',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
+                    border: '1px solid hsl(var(--glass-border))',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    boxShadow: '0 4px 24px hsl(220 30% 10% / 0.1)',
+                  }}
+                  formatter={(v: number) => [`$${v.toLocaleString()}`, 'Balance']}
+                  labelFormatter={(v) => `Month ${v}`}
+                />
+                <Area type="monotone" dataKey="balance" stroke="hsl(var(--primary))" fill="url(#equityGrad)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </GlassCard>
     </div>
   );
