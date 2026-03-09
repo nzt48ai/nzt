@@ -17,7 +17,6 @@ export default function CompoundCalculator() {
 
   const bal6 = data36.find((d) => d.month === 6)?.balance ?? 0;
   const bal12 = data36.find((d) => d.month === 12)?.balance ?? 0;
-  const bal36 = data36[data36.length - 1]?.balance ?? 0;
 
   return (
     <div className="space-y-4">
@@ -38,11 +37,10 @@ export default function CompoundCalculator() {
         </div>
       </GlassCard>
 
-      {/* Projections */}
-      <div className="grid grid-cols-3 gap-2">
+      {/* Projections — 2 cards only */}
+      <div className="grid grid-cols-2 gap-2">
         <ProjectionCard label="6 Months" value={bal6} />
         <ProjectionCard label="1 Year" value={bal12} />
-        <ProjectionCard label="3 Years" value={bal36} />
       </div>
 
       {/* Equity Curve */}
