@@ -100,3 +100,64 @@ export function calcCompoundGrowthExpected(
 
   return data;
 }
+
+// Generate individual trade results up to maxTrades (200 max)
+export function calcTradeByTrade(
+  startingBalance: number,
+  winRate: number,
+  riskPercent: number,
+  avgRMultiple: number,
+  tradesPerMonth: number,
+  months: number,
+  maxTrades: number = 200
+) {
+  const W = winRate / 100;
+  const R = riskPercent / 100;
+  const totalTrades = Math.min(tradesPerMonth * months, maxTrades);
+  
+  const trades: { 
+    trade: number; 
+    before: number; 
+    after: number; 
+    result: 'win' | 'loss'; 
+    pnl: number 
+  }[] = [];
+  
+  let balance = startingBalance;
+  
+  for (let i = 1; i <= totalTrades; i++) {
+    const beforeBalance = balance;
+    const isWin = Math.random() < W;
+    let pnl: number;
+    
+    if (isWin) {
+      pnl = balance * R * avgRMultiple;
+      balance += pnl;
+    } else {
+      pnl = -(balance * R);
+      balance += pnl; // pnl is negative
+    }
+    
+    if (balance <= 0) {
+      balance = 0;
+      trades.push({
+        trade: i,
+        before: beforeBalance,
+        after: balance,
+        result: isWin ? 'win' : 'loss',
+        pnl
+      });
+      break;
+    }
+    
+    trades.push({
+      trade: i,
+      before: beforeBalance,
+      after: balance,
+      result: isWin ? 'win' : 'loss',
+      pnl
+    });
+  }
+  
+  return trades;
+}
