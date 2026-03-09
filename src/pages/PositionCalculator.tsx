@@ -71,8 +71,14 @@ export default function PositionCalculator() {
             className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
               store.instrument === inst
                 ? 'bg-primary text-primary-foreground shadow-sm'
-                : 'bg-card border border-border text-muted-foreground hover:text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
+            style={store.instrument !== inst ? {
+              background: 'hsl(var(--glass-bg))',
+              border: '1px solid hsl(var(--glass-border))',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+            } : {}}
           >
             {inst}
           </button>
@@ -135,7 +141,15 @@ export default function PositionCalculator() {
       </div>
 
       {/* Kelly Toggle */}
-      <div className="flex gap-2 bg-card border border-border rounded-xl p-1">
+      <div
+        className="flex gap-2 rounded-xl p-1"
+        style={{
+          background: 'hsl(var(--glass-bg))',
+          border: '1px solid hsl(var(--glass-border))',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+        }}
+      >
         <button
           onClick={() => setKellyMode('half')}
           className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${

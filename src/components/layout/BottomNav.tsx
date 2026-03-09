@@ -23,15 +23,25 @@ export default function BottomNav() {
       style={{ x: '-50%' }}
     >
       <nav
-        className="relative overflow-hidden rounded-[22px] px-1.5 py-2 bg-card border border-border shadow-lg"
+        className="relative overflow-hidden rounded-[22px] px-1.5 py-2"
+        style={{
+          background: 'hsl(var(--glass-bg))',
+          borderColor: 'hsl(var(--glass-border))',
+          border: '1px solid',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          boxShadow: '0 8px 32px hsl(220 30% 10% / 0.1), inset 0 1px 0 hsl(0 0% 100% / 0.5)',
+        }}
       >
         <div className="flex items-center justify-around relative">
           {/* Sliding active pill */}
           {activeIndex >= 0 && (
             <motion.div
               layoutId="active-pill"
-              className="absolute rounded-xl pointer-events-none bg-secondary"
+              className="absolute rounded-xl pointer-events-none"
               style={{
+                background: 'hsl(var(--primary) / 0.12)',
+                border: '1px solid hsl(var(--primary) / 0.2)',
                 width: `${100 / tabs.length}%`,
                 left: `${(activeIndex / tabs.length) * 100}%`,
                 top: 0,

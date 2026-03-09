@@ -5,7 +5,6 @@ import { calcCompoundGrowthExpected } from '@/lib/calculations';
 import GlassCard from '@/components/ui/GlassCard';
 import AnimatedNumber from '@/components/ui/AnimatedNumber';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export default function CompoundCalculator() {
@@ -54,14 +53,21 @@ export default function CompoundCalculator() {
             <AreaChart data={data36}>
               <defs>
                 <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(220, 80%, 55%)" stopOpacity={0.3} />
+                  <stop offset="0%" stopColor="hsl(220, 80%, 55%)" stopOpacity={0.35} />
                   <stop offset="100%" stopColor="hsl(220, 80%, 55%)" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
               <XAxis dataKey="month" tick={{ fontSize: 10, fill: 'hsl(220,10%,50%)' }} tickFormatter={(v) => `M${v}`} />
               <YAxis tick={{ fontSize: 10, fill: 'hsl(220,10%,50%)' }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
               <Tooltip
-                contentStyle={{ background: 'hsl(0,0%,100%)', border: '1px solid hsl(220,14%,90%)', borderRadius: '12px', fontSize: '12px' }}
+                contentStyle={{
+                  background: 'hsl(0 0% 100% / 0.7)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid hsl(0 0% 100% / 0.4)',
+                  borderRadius: '12px',
+                  fontSize: '12px',
+                  boxShadow: '0 4px 24px hsl(220 30% 10% / 0.1)',
+                }}
                 formatter={(v: number) => [`$${v.toLocaleString()}`, 'Balance']}
                 labelFormatter={(v) => `Month ${v}`}
               />
@@ -93,15 +99,24 @@ function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
     <div>
       <Label className="text-[10px] text-muted-foreground">{label}</Label>
       <div className="relative mt-0.5">
-        {prefix && <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{prefix}</span>}
-        <Input
+        {prefix && <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground z-10">{prefix}</span>}
+        <input
           type="number"
           value={raw}
           step={step}
           onChange={handleChange}
           onBlur={handleBlur}
           onFocus={(e) => e.target.select()}
-          className={`bg-secondary border-border font-numbers text-sm h-9 ${prefix ? 'pl-6' : ''} ${suffix ? 'pr-6' : ''}`}
+          className={`w-full h-9 rounded-lg text-sm font-numbers font-medium text-foreground outline-none px-3 transition-all
+            [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+            ${prefix ? 'pl-6' : ''} ${suffix ? 'pr-6' : ''}
+            focus:ring-1 focus:ring-primary/40`}
+          style={{
+            background: 'hsl(0 0% 100% / 0.4)',
+            border: '1px solid hsl(0 0% 100% / 0.5)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+          }}
         />
         {suffix && <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{suffix}</span>}
       </div>
