@@ -394,10 +394,11 @@ export default function PositionCalculator() {
                 type="number"
                 inputMode="numeric"
                 min={0}
-                value={manualContracts}
-                onChange={(e) => setManualContracts(Math.max(0, Math.floor(Number(e.target.value))))}
+                value={manualContracts === 0 ? '' : manualContracts}
+                placeholder="0"
+                onChange={(e) => setManualContracts(Math.max(0, Math.floor(Number(e.target.value) || 0)))}
                 onFocus={(e) => e.target.select()}
-                className="bg-transparent text-6xl font-bold text-primary font-numbers text-center outline-none w-36 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-b-2 border-primary/40 focus:border-primary transition-colors"
+                className="bg-transparent text-6xl font-bold text-primary font-numbers text-center outline-none w-36 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-primary/30"
               />
             </motion.div>
           ) : (
