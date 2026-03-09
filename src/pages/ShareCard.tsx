@@ -7,7 +7,6 @@ export default function ShareCard() {
     <div className="space-y-4">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <h1 className="text-xl font-bold text-gradient">Share Card</h1>
-        <p className="text-xs text-muted-foreground mt-0.5">Generate shareable trade cards</p>
       </motion.div>
       <GlassCard className="flex flex-col items-center py-12">
         <Share2 size={48} className="text-muted-foreground mb-3" />
