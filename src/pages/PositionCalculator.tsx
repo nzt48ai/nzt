@@ -33,11 +33,16 @@ const PRICE_DECIMALS: Record<Instrument, number> = {
 
 // Adaptive step tiers based on scroll velocity (px/ms → multiplier of tick)
 // Slow = 1 tick, medium = 4 ticks (1pt), fast = 20 ticks (5pt), very fast = 100 ticks
+// Snap value to nearest tick
+function snapToTick(v: number, tick: number): number {
+  return Math.round(v / tick) * tick;
+}
+
+// Velocity → tick multiplier: slow = 1 tick, medium = 4, fast = 20
 function getAdaptiveSteps(velocity: number): number {
-  if (velocity < 0.3) return 1;
-  if (velocity < 1.0) return 4;
-  if (velocity < 3.0) return 20;
-  return 100;
+  if (velocity < 0.4) return 1;
+  if (velocity < 1.2) return 4;
+  return 20;
 }
 
 const springFast = { type: 'spring' as const, stiffness: 480, damping: 32, mass: 0.6 };
@@ -87,23 +92,22 @@ function PriceInput({ value, onChange, instrument, colorClass, label }: PriceInp
     const clamped = clamp(next);
     animRef.current = animate(animVal, clamped, {
       type: 'spring',
-      stiffness: 600,
-      damping: 38,
-      mass: 0.4,
-      onUpdate: (v) => setRaw(v.toFixed(decimals)),
+      stiffness: 520,
+      damping: 42,
+      mass: 0.5,
+      onUpdate: (v) => setRaw(snapToTick(v, tick).toFixed(decimals)),
       onComplete: () => {
         isAnimating.current = false;
         setRaw(fmt(clamped));
       },
     });
     onChange(clamped);
-  }, [animVal, decimals, fmt, onChange]);
+  }, [animVal, decimals, fmt, tick, onChange]);
 
   const handleWheel = useCallback((e: React.WheelEvent<HTMLInputElement>) => {
     e.preventDefault();
     const now = performance.now();
     const dt = now - lastWheelTime.current;
-    // Velocity in px/ms (use abs deltaY)
     const rawDelta = Math.abs(e.deltaY);
     const velocity = dt > 0 ? rawDelta / dt : 0;
     lastWheelTime.current = now;
@@ -111,7 +115,8 @@ function PriceInput({ value, onChange, instrument, colorClass, label }: PriceInp
 
     const steps = getAdaptiveSteps(velocity);
     const dir = e.deltaY < 0 ? 1 : -1;
-    const next = parseFloat((value + dir * steps * tick).toFixed(4));
+    // Always snap result to tick grid
+    const next = snapToTick(value + dir * steps * tick, tick);
     smoothTo(next);
   }, [value, tick, smoothTo]);
 
@@ -127,17 +132,15 @@ function PriceInput({ value, onChange, instrument, colorClass, label }: PriceInp
     const y = e.touches[0].clientY;
     const now = performance.now();
     const dt = now - touchLastTime.current;
-    const dy = touchLastY.current - y; // positive = finger moved up = price up
+    const dy = touchLastY.current - y;
 
-    // Velocity-based step (pixels per ms)
     const velocity = dt > 0 ? Math.abs(dy) / dt : 0;
     const steps = getAdaptiveSteps(velocity);
 
-    // Accumulate from total drag for precision when slow
+    // 8px per tick at slowest; scale up with velocity
     const totalDy = touchStartY.current - y;
-    const ticksFromTotal = totalDy / 6; // 6px per tick at minimum precision
-    const adaptedDelta = Math.sign(ticksFromTotal) * Math.abs(ticksFromTotal) * steps * tick;
-    const next = parseFloat((touchStartVal.current + adaptedDelta / steps).toFixed(4));
+    const tickCount = Math.round(totalDy / 8) * steps;
+    const next = snapToTick(touchStartVal.current + tickCount * tick, tick);
 
     touchLastY.current = y;
     touchLastTime.current = now;
@@ -182,7 +185,7 @@ function PriceInput({ value, onChange, instrument, colorClass, label }: PriceInp
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           className={`bg-transparent font-bold font-numbers w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-ns-resize touch-none leading-none ${colorClass}`}
-          style={{ fontSize: 'clamp(1.35rem, 5.5vw, 1.85rem)' }}
+          style={{ fontSize: 'clamp(1.05rem, 4vw, 1.35rem)' }}
         />
       </div>
     </GlassCard>
@@ -316,12 +319,10 @@ export default function PositionCalculator() {
         />
       </div>
 
-      {/* Win Rate */}
-      <GlassCard className="flex flex-col p-0 overflow-hidden">
-        <div className="px-3 pt-2.5">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">Win Rate</span>
-        </div>
-        <div className="flex-1 flex items-end px-3 pb-3 pt-1 gap-0.5">
+      {/* Win Rate — compact inline row */}
+      <GlassCard className="flex items-center justify-between px-4 py-3">
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">Win Rate</span>
+        <div className="flex items-baseline gap-0.5">
           <input
             type="number"
             inputMode="decimal"
@@ -330,10 +331,9 @@ export default function PositionCalculator() {
             value={store.winRate}
             onChange={(e) => store.setWinRate(Math.min(100, Math.max(0, Number(e.target.value))))}
             onFocus={(e) => e.target.select()}
-            className="bg-transparent font-bold font-numbers text-foreground w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none leading-none"
-            style={{ fontSize: 'clamp(1.35rem, 5.5vw, 1.85rem)' }}
+            className="bg-transparent text-base font-bold font-numbers text-foreground w-10 text-right outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
-          <span className="text-muted-foreground text-base font-semibold pb-0.5">%</span>
+          <span className="text-sm text-muted-foreground font-medium">%</span>
         </div>
       </GlassCard>
 
