@@ -9,13 +9,18 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 export default function CompoundCalculator() {
   const store = useCompoundStore();
 
-  const data36 = useMemo(
-    () => calcCompoundGrowthExpected(store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth, 36),
-    [store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth]
+  const [showTradeByTrade, setShowTradeByTrade] = useState(false);
+
+  const data12 = useMemo(
+    () => {
+      const calcFn = showTradeByTrade ? calcCompoundGrowth : calcCompoundGrowthExpected;
+      return calcFn(store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth, 12);
+    },
+    [store.startingBalance, store.winRate, store.riskPercent, store.avgRMultiple, store.tradesPerMonth, showTradeByTrade]
   );
 
-  const bal6 = data36.find((d) => d.month === 6)?.balance ?? 0;
-  const bal12 = data36.find((d) => d.month === 12)?.balance ?? 0;
+  const bal6 = data12.find((d) => d.month === 6)?.balance ?? 0;
+  const bal12 = data12.find((d) => d.month === 12)?.balance ?? 0;
 
   return (
     <div className="space-y-4">
