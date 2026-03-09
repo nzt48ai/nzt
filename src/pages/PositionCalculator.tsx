@@ -132,17 +132,15 @@ function PriceInput({ value, onChange, instrument, colorClass, label }: PriceInp
     const y = e.touches[0].clientY;
     const now = performance.now();
     const dt = now - touchLastTime.current;
-    const dy = touchLastY.current - y; // positive = finger moved up = price up
+    const dy = touchLastY.current - y;
 
-    // Velocity-based step (pixels per ms)
     const velocity = dt > 0 ? Math.abs(dy) / dt : 0;
     const steps = getAdaptiveSteps(velocity);
 
-    // Accumulate from total drag for precision when slow
+    // 8px per tick at slowest; scale up with velocity
     const totalDy = touchStartY.current - y;
-    const ticksFromTotal = totalDy / 6; // 6px per tick at minimum precision
-    const adaptedDelta = Math.sign(ticksFromTotal) * Math.abs(ticksFromTotal) * steps * tick;
-    const next = parseFloat((touchStartVal.current + adaptedDelta / steps).toFixed(4));
+    const tickCount = Math.round(totalDy / 8) * steps;
+    const next = snapToTick(touchStartVal.current + tickCount * tick, tick);
 
     touchLastY.current = y;
     touchLastTime.current = now;
