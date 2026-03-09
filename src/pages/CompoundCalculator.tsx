@@ -59,9 +59,10 @@ export default function CompoundCalculator() {
               <YAxis tick={{ fontSize: 10, fill: 'hsl(220,10%,50%)' }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
               <Tooltip
                 contentStyle={{
-                  background: 'hsl(0 0% 100% / 0.7)',
+                  background: 'hsl(var(--glass-bg))',
                   backdropFilter: 'blur(12px)',
-                  border: '1px solid hsl(0 0% 100% / 0.4)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: '1px solid hsl(var(--glass-border))',
                   borderRadius: '12px',
                   fontSize: '12px',
                   boxShadow: '0 4px 24px hsl(220 30% 10% / 0.1)',
