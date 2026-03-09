@@ -160,7 +160,7 @@ function PriceInput({ value, onChange, instrument, colorClass, label }: PriceInp
 
   return (
     <GlassCard className="flex flex-col p-0 overflow-hidden">
-      <div className="px-3 pt-2.5 pb-0">
+      <div className="px-3 pt-2.5 pb-0 text-center">
         <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">{label}</span>
       </div>
       <div className="flex-1 flex items-center justify-center px-3 pb-3 pt-1">
