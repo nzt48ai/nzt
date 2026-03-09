@@ -5,7 +5,6 @@ import { calcCompoundGrowthExpected } from '@/lib/calculations';
 import GlassCard from '@/components/ui/GlassCard';
 import AnimatedNumber from '@/components/ui/AnimatedNumber';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { Label } from '@/components/ui/label';
 
 export default function CompoundCalculator() {
   const store = useCompoundStore();
@@ -20,43 +19,76 @@ export default function CompoundCalculator() {
 
   return (
     <div className="space-y-4">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <h1 className="text-xl font-bold text-foreground">Compound Growth</h1>
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="pt-1">
+        <h1 className="text-2xl font-bold text-foreground">Compound Growth</h1>
         <p className="text-xs text-muted-foreground mt-0.5">Simulate account growth over time</p>
       </motion.div>
 
-      <GlassCard>
-        <div className="grid grid-cols-2 gap-3">
-          <FieldInput label="Starting Balance" prefix="$" value={store.startingBalance} onChange={store.setStartingBalance} />
-          <FieldInput label="Win Rate %" suffix="%" value={store.winRate} onChange={store.setWinRate} />
-          <FieldInput label="Risk per Trade %" suffix="%" value={store.riskPercent} onChange={store.setRiskPercent} step={0.5} />
-          <FieldInput label="Avg R Multiple" suffix="R" value={store.avgRMultiple} onChange={store.setAvgRMultiple} step={0.1} />
-          <div className="col-span-2">
-            <FieldInput label="Trades per Month" value={store.tradesPerMonth} onChange={store.setTradesPerMonth} />
-          </div>
+      {/* Starting Balance — big centered card like Position tab */}
+      <GlassCard className="text-center py-5">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-1">Starting Balance</p>
+        <div className="relative inline-flex items-baseline gap-1">
+          <span className="text-muted-foreground text-2xl font-light">$</span>
+          <input
+            type="number"
+            inputMode="decimal"
+            value={store.startingBalance}
+            min={0}
+            onChange={(e) => store.setStartingBalance(Math.max(0, Number(e.target.value)))}
+            onFocus={(e) => e.target.select()}
+            className="bg-transparent text-4xl font-bold font-numbers text-foreground text-center outline-none w-44 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          />
         </div>
       </GlassCard>
 
-      {/* Projections — 2 cards only */}
+      {/* 3 inputs in a row */}
+      <div className="grid grid-cols-3 gap-2.5">
+        <CompactInput label="Win Rate" suffix="%" value={store.winRate} onChange={store.setWinRate} />
+        <CompactInput label="Risk %" suffix="%" value={store.riskPercent} onChange={store.setRiskPercent} step={0.5} />
+        <CompactInput label="Avg R" suffix="R" value={store.avgRMultiple} onChange={store.setAvgRMultiple} step={0.1} />
+      </div>
+
+      {/* Trades per month — inline row like win rate in position tab */}
+      <GlassCard className="flex items-center justify-between px-4 py-3">
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">Trades / Month</span>
+        <div className="flex items-baseline gap-0.5">
+          <input
+            type="number"
+            inputMode="numeric"
+            min={0}
+            value={store.tradesPerMonth}
+            onChange={(e) => store.setTradesPerMonth(Math.max(0, Math.floor(Number(e.target.value))))}
+            onFocus={(e) => e.target.select()}
+            className="bg-transparent text-base font-bold font-numbers text-foreground w-10 text-right outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          />
+        </div>
+      </GlassCard>
+
+      {/* Projections */}
       <div className="grid grid-cols-2 gap-2">
         <ProjectionCard label="6 Months" value={bal6} />
         <ProjectionCard label="1 Year" value={bal12} />
       </div>
 
-      {/* Equity Curve */}
+      {/* Equity Curve — full width */}
       <GlassCard>
-        <p className="text-xs text-muted-foreground mb-2">Projected Equity Curve</p>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-2">Projected Equity Curve</p>
         <div className="h-52">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data36}>
               <defs>
                 <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(220, 80%, 55%)" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="hsl(220, 80%, 55%)" stopOpacity={0.02} />
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
               <XAxis dataKey="month" tick={{ fontSize: 10, fill: 'hsl(220,10%,50%)' }} tickFormatter={(v) => `M${v}`} />
-              <YAxis tick={{ fontSize: 10, fill: 'hsl(220,10%,50%)' }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+              <YAxis
+                tick={{ fontSize: 10, fill: 'hsl(220,10%,50%)' }}
+                tickFormatter={(v: number) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(1)}M` : v >= 1_000 ? `$${(v / 1_000).toFixed(0)}k` : `$${v}`}
+                width={55}
+              />
               <Tooltip
                 contentStyle={{
                   background: 'hsl(var(--glass-bg))',
@@ -70,7 +102,7 @@ export default function CompoundCalculator() {
                 formatter={(v: number) => [`$${v.toLocaleString()}`, 'Balance']}
                 labelFormatter={(v) => `Month ${v}`}
               />
-              <Area type="monotone" dataKey="balance" stroke="hsl(220,80%,55%)" fill="url(#equityGrad)" strokeWidth={2} />
+              <Area type="monotone" dataKey="balance" stroke="hsl(var(--primary))" fill="url(#equityGrad)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -79,8 +111,8 @@ export default function CompoundCalculator() {
   );
 }
 
-function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
-  label: string; value: number; onChange: (v: number) => void; prefix?: string; suffix?: string; step?: number;
+function CompactInput({ label, value, onChange, suffix, step = 1 }: {
+  label: string; value: number; onChange: (v: number) => void; suffix?: string; step?: number;
 }) {
   const [raw, setRaw] = useState(String(value));
 
@@ -90,36 +122,30 @@ function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
     onChange(v === '' ? 0 : Number(v));
   };
 
-  const handleBlur = () => {
-    setRaw(String(value));
-  };
+  const handleBlur = () => setRaw(String(value));
 
   return (
-    <div>
-      <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">{label}</Label>
-      <div className="relative mt-0.5">
-        {prefix && <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/70 z-10">{prefix}</span>}
-        <input
-          type="number"
-          value={raw}
-          step={step}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          onFocus={(e) => e.target.select()}
-          className={`w-full h-9 rounded-lg text-sm font-numbers font-medium text-foreground outline-none px-3 transition-all
-            [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
-            ${prefix ? 'pl-6' : ''} ${suffix ? 'pr-6' : ''}
-            focus:ring-1 focus:ring-primary/40`}
-          style={{
-            background: 'hsl(var(--glass-bg))',
-            border: '1px solid hsl(var(--glass-border))',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-          }}
-        />
-        {suffix && <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/70">{suffix}</span>}
+    <GlassCard className="flex flex-col p-0 overflow-hidden">
+      <div className="px-3 pt-2.5 pb-0 text-center">
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">{label}</span>
       </div>
-    </div>
+      <div className="flex-1 flex items-center justify-center px-3 pb-3 pt-1">
+        <div className="flex items-baseline gap-0.5">
+          <input
+            type="number"
+            inputMode="decimal"
+            value={raw}
+            step={step}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            onFocus={(e) => e.target.select()}
+            className="bg-transparent font-medium font-numbers w-full text-center outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-foreground"
+            style={{ fontSize: 'clamp(1.05rem, 4vw, 1.35rem)' }}
+          />
+          {suffix && <span className="text-xs text-muted-foreground/70 font-medium">{suffix}</span>}
+        </div>
+      </div>
+    </GlassCard>
   );
 }
 
@@ -128,7 +154,7 @@ function ProjectionCard({ label, value }: { label: string; value: number }) {
     <GlassCard glow="primary" className="text-center overflow-hidden">
       <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">{label}</p>
       <p className="text-sm font-bold font-numbers text-primary mt-1 truncate min-w-0">
-        <AnimatedNumber value={value} prefix="$" decimals={0} />
+        ${value.toLocaleString()}
       </p>
     </GlassCard>
   );
