@@ -316,61 +316,58 @@ export default function PositionCalculator() {
         />
       </div>
 
-      {/* Win Rate + Kelly — same row */}
-      <div className="grid grid-cols-5 gap-2.5">
-        {/* Win Rate */}
-        <GlassCard className="col-span-2 flex flex-col p-0 overflow-hidden">
-          <div className="px-3 pt-2.5">
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">Win Rate</span>
-          </div>
-          <div className="flex-1 flex items-end px-3 pb-3 pt-1 gap-0.5">
-            <input
-              type="number"
-              inputMode="decimal"
-              min={0}
-              max={100}
-              value={store.winRate}
-              onChange={(e) => store.setWinRate(Math.min(100, Math.max(0, Number(e.target.value))))}
-              onFocus={(e) => e.target.select()}
-              className="bg-transparent font-bold font-numbers text-foreground w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none leading-none"
-              style={{ fontSize: 'clamp(1.35rem, 5.5vw, 1.85rem)' }}
-            />
-            <span className="text-muted-foreground text-base font-semibold pb-0.5">%</span>
-          </div>
-        </GlassCard>
+      {/* Win Rate */}
+      <GlassCard className="flex flex-col p-0 overflow-hidden">
+        <div className="px-3 pt-2.5">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">Win Rate</span>
+        </div>
+        <div className="flex-1 flex items-end px-3 pb-3 pt-1 gap-0.5">
+          <input
+            type="number"
+            inputMode="decimal"
+            min={0}
+            max={100}
+            value={store.winRate}
+            onChange={(e) => store.setWinRate(Math.min(100, Math.max(0, Number(e.target.value))))}
+            onFocus={(e) => e.target.select()}
+            className="bg-transparent font-bold font-numbers text-foreground w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none leading-none"
+            style={{ fontSize: 'clamp(1.35rem, 5.5vw, 1.85rem)' }}
+          />
+          <span className="text-muted-foreground text-base font-semibold pb-0.5">%</span>
+        </div>
+      </GlassCard>
 
-        {/* Kelly Selector */}
-        <div className="col-span-3 flex flex-col gap-1">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 px-0.5">Kelly</span>
-          <div
-            className="flex flex-1 rounded-xl overflow-hidden"
-            style={{ border: '1px solid hsl(var(--glass-border))', background: 'hsl(var(--glass-bg))' }}
-          >
-            {KELLY_OPTIONS.map(({ mode, label }, i) => {
-              const active = kellyMode === mode;
-              return (
-                <motion.button
-                  key={mode}
-                  onClick={() => setKellyMode(mode)}
-                  className={`flex-1 text-xs font-bold relative transition-colors duration-150 ${
-                    active ? 'text-primary' : 'text-muted-foreground/40'
-                  } ${i > 0 ? 'border-l' : ''}`}
-                  style={i > 0 ? { borderColor: 'hsl(var(--glass-border))' } : {}}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  {active && (
-                    <motion.div
-                      layoutId="kelly-pill"
-                      className="absolute inset-0"
-                      style={{ background: 'hsl(var(--primary) / 0.1)' }}
-                      transition={springFast}
-                    />
-                  )}
-                  <span className="relative z-10">{label}</span>
-                </motion.button>
-              );
-            })}
-          </div>
+      {/* Kelly Selector */}
+      <div className="flex flex-col gap-1">
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 px-0.5">Kelly</span>
+        <div
+          className="flex rounded-xl overflow-hidden h-10"
+          style={{ border: '1px solid hsl(var(--glass-border))', background: 'hsl(var(--glass-bg))' }}
+        >
+          {KELLY_OPTIONS.map(({ mode, label }, i) => {
+            const active = kellyMode === mode;
+            return (
+              <motion.button
+                key={mode}
+                onClick={() => setKellyMode(mode)}
+                className={`flex-1 text-xs font-bold relative transition-colors duration-150 ${
+                  active ? 'text-primary' : 'text-muted-foreground/40'
+                } ${i > 0 ? 'border-l' : ''}`}
+                style={i > 0 ? { borderColor: 'hsl(var(--glass-border))' } : {}}
+                whileTap={{ scale: 0.9 }}
+              >
+                {active && (
+                  <motion.div
+                    layoutId="kelly-pill"
+                    className="absolute inset-0"
+                    style={{ background: 'hsl(var(--primary) / 0.1)' }}
+                    transition={springFast}
+                  />
+                )}
+                <span className="relative z-10">{label}</span>
+              </motion.button>
+            );
+          })}
         </div>
       </div>
 
