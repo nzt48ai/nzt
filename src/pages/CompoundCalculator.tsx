@@ -124,9 +124,9 @@ function FieldInput({ label, value, onChange, prefix, suffix, step = 1 }: {
 
 function ProjectionCard({ label, value }: { label: string; value: number }) {
   return (
-    <GlassCard glow="primary" className="text-center">
-      <p className="text-[10px] text-muted-foreground">{label}</p>
-      <p className="text-sm font-bold font-numbers text-primary mt-1">
+    <GlassCard glow="primary" className="text-center overflow-hidden">
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">{label}</p>
+      <p className="text-sm font-bold font-numbers text-primary mt-1 truncate min-w-0">
         <AnimatedNumber value={value} prefix="$" decimals={0} />
       </p>
     </GlassCard>
