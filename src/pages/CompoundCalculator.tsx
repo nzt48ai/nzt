@@ -78,10 +78,26 @@ export default function CompoundCalculator() {
 
       {/* Equity Curve — full width */}
       <GlassCard>
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-2">Projected Equity Curve</p>
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">Projected Equity Curve</p>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-medium text-muted-foreground">Deterministic</span>
+            <button
+              onClick={() => setShowTradeByTrade(!showTradeByTrade)}
+              className={`w-8 h-4 rounded-full p-0.5 transition-colors duration-200 ${showTradeByTrade ? 'bg-primary' : 'bg-muted/50'}`}
+            >
+              <motion.div
+                className="w-3 h-3 bg-white rounded-full shadow-sm"
+                animate={{ x: showTradeByTrade ? 16 : 0 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              />
+            </button>
+            <span className="text-[10px] font-medium text-muted-foreground">Random Walk</span>
+          </div>
+        </div>
         <div className="h-52">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data36}>
+            <AreaChart data={data12}>
               <defs>
                 <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
