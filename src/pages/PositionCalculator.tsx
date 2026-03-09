@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useSpring, useTransform, useMotionValue, animate } from 'framer-motion';
 import { usePositionStore, type Instrument, INSTRUMENT_LABELS, POINT_VALUES } from '@/stores/calculatorStore';
 import { calcPositionSize } from '@/lib/calculations';
 import GlassCard from '@/components/ui/GlassCard';
@@ -7,7 +7,14 @@ import AnimatedNumber from '@/components/ui/AnimatedNumber';
 import { Label } from '@/components/ui/label';
 
 const instruments: Instrument[] = ['ES', 'MES', 'NQ', 'MNQ'];
-type KellyMode = 'half' | 'quarter';
+type KellyMode = 'full' | 'half' | 'quarter' | 'off';
+
+const KELLY_OPTIONS: { mode: KellyMode; label: string }[] = [
+  { mode: 'full', label: 'Full' },
+  { mode: 'half', label: '½' },
+  { mode: 'quarter', label: '¼' },
+  { mode: 'off', label: 'Off' },
+];
 
 // Tick size per instrument (minimum price movement)
 const TICK_SIZE: Record<Instrument, number> = {
@@ -26,18 +33,21 @@ interface NumericInputProps {
   min?: number;
   max?: number;
   className?: string;
-  /** If true, uses scroll/wheel to increment by `step` */
   scrollable?: boolean;
   instrument?: Instrument;
 }
 
-function NumericInput({ value, onChange, step = 1, min, max, className, scrollable, instrument }: NumericInputProps) {
+function NumericInput({ value, onChange, step = 1, min, max, className, scrollable }: NumericInputProps) {
   const [raw, setRaw] = useState(String(value));
   const [focused, setFocused] = useState(false);
   const startY = useRef<number | null>(null);
   const startValue = useRef<number>(value);
+  // For smooth animated scroll display
+  const animatedValue = useMotionValue(value);
+  const isScrolling = useRef(false);
+  const scrollAnimRef = useRef<ReturnType<typeof animate> | null>(null);
 
-  if (!focused && raw !== String(value)) {
+  if (!focused && !isScrolling.current && raw !== String(value)) {
     setRaw(String(value));
   }
 
@@ -54,15 +64,33 @@ function NumericInput({ value, onChange, step = 1, min, max, className, scrollab
     onChange(clamp(num));
   };
 
+  const smoothStep = useCallback((next: number) => {
+    isScrolling.current = true;
+    if (scrollAnimRef.current) scrollAnimRef.current.stop();
+    scrollAnimRef.current = animate(animatedValue, next, {
+      type: 'spring',
+      stiffness: 500,
+      damping: 35,
+      mass: 0.5,
+      onUpdate: (v) => {
+        setRaw(v.toFixed(step < 1 ? 2 : 0));
+      },
+      onComplete: () => {
+        isScrolling.current = false;
+        setRaw(String(next));
+      },
+    });
+    onChange(next);
+  }, [animatedValue, onChange, step]);
+
   const handleWheel = useCallback((e: React.WheelEvent<HTMLInputElement>) => {
     if (!scrollable) return;
     e.preventDefault();
     const delta = e.deltaY < 0 ? step : -step;
     const next = clamp(parseFloat((value + delta).toFixed(4)));
-    onChange(next);
-  }, [scrollable, step, value, onChange, clamp]);
+    smoothStep(next);
+  }, [scrollable, step, value, clamp, smoothStep]);
 
-  // Touch drag to scroll values
   const handleTouchStart = useCallback((e: React.TouchEvent<HTMLInputElement>) => {
     if (!scrollable) return;
     startY.current = e.touches[0].clientY;
@@ -73,11 +101,10 @@ function NumericInput({ value, onChange, step = 1, min, max, className, scrollab
     if (!scrollable || startY.current === null) return;
     e.preventDefault();
     const dy = startY.current - e.touches[0].clientY;
-    const steps = Math.round(dy / 8); // 8px per step
+    const steps = Math.round(dy / 6);
     const next = clamp(parseFloat((startValue.current + steps * step).toFixed(4)));
-    onChange(next);
-    setRaw(String(next));
-  }, [scrollable, step, onChange, clamp]);
+    smoothStep(next);
+  }, [scrollable, step, clamp, smoothStep]);
 
   const handleTouchEnd = useCallback(() => {
     startY.current = null;
@@ -92,7 +119,7 @@ function NumericInput({ value, onChange, step = 1, min, max, className, scrollab
       min={min}
       max={max}
       onChange={handleChange}
-      onBlur={() => { setFocused(false); setRaw(String(value)); }}
+      onBlur={() => { setFocused(false); isScrolling.current = false; setRaw(String(value)); }}
       onFocus={(e) => { setFocused(true); e.target.select(); }}
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
@@ -114,12 +141,14 @@ export default function PositionCalculator() {
   );
 
   const contracts = result
-    ? kellyMode === 'half' ? result.halfKellyContracts : result.quarterKellyContracts
+    ? kellyMode === 'full' ? Math.floor(store.balance * (result.kellyPercent / 100) / result.riskPerContract)
+    : kellyMode === 'half' ? result.halfKellyContracts
+    : kellyMode === 'quarter' ? result.quarterKellyContracts
+    : 0
     : 0;
 
-  const dollarRisk = result
-    ? contracts * result.riskPerContract
-    : 0;
+  const dollarRisk = result ? contracts * result.riskPerContract : 0;
+  const dollarReturn = result ? contracts * result.rewardPoints * POINT_VALUES[store.instrument] : 0;
 
   const tick = TICK_SIZE[store.instrument];
 
@@ -131,7 +160,7 @@ export default function PositionCalculator() {
         <p className="text-xs text-muted-foreground mt-0.5">Kelly-based contract sizing</p>
       </motion.div>
 
-      {/* Instrument Selector — matches BottomNav style */}
+      {/* Instrument Selector */}
       <div
         className="relative overflow-hidden rounded-[22px] px-1.5 py-2"
         style={{
@@ -143,7 +172,6 @@ export default function PositionCalculator() {
         }}
       >
         <div className="flex items-center relative">
-          {/* Sliding active pill */}
           {activeIndex >= 0 && (
             <motion.div
               layoutId="inst-pill"
@@ -160,7 +188,7 @@ export default function PositionCalculator() {
             />
           )}
 
-          {instruments.map((inst, i) => {
+          {instruments.map((inst) => {
             const active = store.instrument === inst;
             return (
               <motion.button
@@ -174,15 +202,11 @@ export default function PositionCalculator() {
                 <motion.span
                   animate={active ? { scale: 1.1 } : { scale: 1 }}
                   transition={spring}
-                  className={`text-sm font-bold transition-colors duration-200 ${
-                    active ? 'text-primary' : 'text-muted-foreground'
-                  }`}
+                  className={`text-sm font-bold transition-colors duration-200 ${active ? 'text-primary' : 'text-muted-foreground'}`}
                 >
                   {inst}
                 </motion.span>
-                <span className={`text-[9px] font-medium transition-colors duration-200 leading-tight text-center ${
-                  active ? 'text-primary/70' : 'text-muted-foreground/60'
-                }`}>
+                <span className={`text-[9px] font-medium transition-colors duration-200 leading-tight text-center ${active ? 'text-primary/70' : 'text-muted-foreground/60'}`}>
                   {INSTRUMENT_LABELS[inst].split(' ').slice(0, 2).join(' ')}
                 </span>
               </motion.button>
@@ -207,9 +231,9 @@ export default function PositionCalculator() {
 
       {/* Trade Inputs */}
       <div className="grid grid-cols-2 gap-3">
+        {/* Entry */}
         <GlassCard className="py-3 px-4">
           <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Entry</Label>
-          <p className="text-[9px] text-muted-foreground/60 mt-0.5">scroll or drag ↕ to adjust</p>
           <NumericInput
             value={store.entryPrice}
             onChange={store.setEntryPrice}
@@ -217,12 +241,13 @@ export default function PositionCalculator() {
             min={0}
             scrollable
             instrument={store.instrument}
-            className="bg-transparent text-xl font-bold font-numbers text-foreground w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-ns-resize touch-none"
+            className="bg-transparent text-xl font-bold font-numbers text-foreground w-full outline-none mt-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-ns-resize touch-none"
           />
         </GlassCard>
+
+        {/* Stop */}
         <GlassCard className="py-3 px-4">
-          <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Stop Loss</Label>
-          <p className="text-[9px] text-muted-foreground/60 mt-0.5">scroll or drag ↕ to adjust</p>
+          <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Stop</Label>
           <NumericInput
             value={store.stopLoss}
             onChange={store.setStopLoss}
@@ -230,12 +255,13 @@ export default function PositionCalculator() {
             min={0}
             scrollable
             instrument={store.instrument}
-            className="bg-transparent text-xl font-bold font-numbers text-destructive w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-ns-resize touch-none"
+            className="bg-transparent text-xl font-bold font-numbers text-destructive w-full outline-none mt-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-ns-resize touch-none"
           />
         </GlassCard>
+
+        {/* Target */}
         <GlassCard className="py-3 px-4">
           <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Target</Label>
-          <p className="text-[9px] text-muted-foreground/60 mt-0.5">scroll or drag ↕ to adjust</p>
           <NumericInput
             value={store.targetPrice}
             onChange={store.setTargetPrice}
@@ -243,12 +269,14 @@ export default function PositionCalculator() {
             min={0}
             scrollable
             instrument={store.instrument}
-            className="bg-transparent text-xl font-bold font-numbers text-success w-full outline-none mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-ns-resize touch-none"
+            className="bg-transparent text-xl font-bold font-numbers text-success w-full outline-none mt-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-ns-resize touch-none"
           />
         </GlassCard>
+
+        {/* Win Rate */}
         <GlassCard className="py-3 px-4">
           <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Win Rate</Label>
-          <div className="flex items-baseline gap-0.5 mt-1">
+          <div className="flex items-baseline gap-0.5 mt-2">
             <NumericInput
               value={store.winRate}
               onChange={(v) => store.setWinRate(Math.min(100, Math.max(0, v)))}
@@ -262,36 +290,35 @@ export default function PositionCalculator() {
         </GlassCard>
       </div>
 
-      {/* Kelly Toggle */}
-      <div
-        className="flex gap-2 rounded-xl p-1"
-        style={{
-          background: 'hsl(var(--glass-bg))',
-          border: '1px solid hsl(var(--glass-border))',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-        }}
-      >
-        <button
-          onClick={() => setKellyMode('half')}
-          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-            kellyMode === 'half'
-              ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-muted-foreground'
-          }`}
-        >
-          ½ Kelly
-        </button>
-        <button
-          onClick={() => setKellyMode('quarter')}
-          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-            kellyMode === 'quarter'
-              ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-muted-foreground'
-          }`}
-        >
-          ¼ Kelly
-        </button>
+      {/* Kelly Selector — subtle pill row */}
+      <div className="flex items-center gap-2">
+        <span className="text-[10px] text-muted-foreground/60 uppercase tracking-wider shrink-0">Kelly</span>
+        <div className="flex flex-1 rounded-lg overflow-hidden" style={{ border: '1px solid hsl(var(--glass-border))' }}>
+          {KELLY_OPTIONS.map(({ mode, label }, i) => {
+            const active = kellyMode === mode;
+            return (
+              <motion.button
+                key={mode}
+                onClick={() => setKellyMode(mode)}
+                className={`flex-1 py-1.5 text-xs font-semibold relative transition-colors duration-200 ${
+                  active ? 'text-primary' : 'text-muted-foreground/50'
+                } ${i > 0 ? 'border-l' : ''}`}
+                style={i > 0 ? { borderColor: 'hsl(var(--glass-border))' } : {}}
+                whileTap={{ scale: 0.92 }}
+              >
+                {active && (
+                  <motion.div
+                    layoutId="kelly-pill"
+                    className="absolute inset-0 rounded-none"
+                    style={{ background: 'hsl(var(--primary) / 0.08)' }}
+                    transition={spring}
+                  />
+                )}
+                <span className="relative z-10">{label}</span>
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Result Card */}
@@ -310,16 +337,22 @@ export default function PositionCalculator() {
             {contracts === 1 ? 'contract' : 'contracts'}
           </p>
 
-          <div className="flex justify-center gap-8 mt-6">
+          <div className="grid grid-cols-3 gap-4 mt-6 pt-5 border-t" style={{ borderColor: 'hsl(var(--glass-border))' }}>
             <div>
-              <p className="text-[10px] text-muted-foreground uppercase">Risk</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Risk $</p>
               <p className="text-sm font-bold font-numbers text-destructive">
-                $<AnimatedNumber value={dollarRisk} decimals={0} />
+                <AnimatedNumber value={dollarRisk} prefix="$" decimals={0} />
               </p>
             </div>
             <div>
-              <p className="text-[10px] text-muted-foreground uppercase">R Multiple</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Return $</p>
               <p className="text-sm font-bold font-numbers text-success">
+                <AnimatedNumber value={dollarReturn} prefix="$" decimals={0} />
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">R:R</p>
+              <p className="text-sm font-bold font-numbers text-foreground">
                 <AnimatedNumber value={result.rMultiple} decimals={1} suffix="R" />
               </p>
             </div>
