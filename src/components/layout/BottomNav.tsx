@@ -41,7 +41,7 @@ export default function BottomNav() {
           {activeIndex >= 0 && (
             <motion.div
               layoutId="active-pill"
-              className="absolute rounded-xl pointer-events-none"
+              className="absolute rounded-full pointer-events-none"
               style={{
                 background: 'hsl(var(--primary) / 0.12)',
                 border: '1px solid hsl(var(--primary) / 0.25)',
@@ -61,7 +61,7 @@ export default function BottomNav() {
               <motion.button
                 key={tab.path}
                 onClick={() => navigate(tab.path)}
-                className="relative flex flex-col items-center gap-0.5 flex-1 py-1.5 rounded-xl"
+                className="relative flex flex-col items-center gap-0.5 flex-1 py-1.5 rounded-full"
                 whileTap={{ scale: 0.82, transition: { duration: 0.08 } }}
                 whileHover={{ scale: 1.08, transition: { type: 'spring', stiffness: 400, damping: 18 } }}
               >

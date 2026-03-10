@@ -227,7 +227,7 @@ export default function PositionCalculator() {
 
       {/* Instrument Selector */}
       <div
-        className="relative overflow-hidden rounded-[22px] px-1.5 py-2"
+        className="relative overflow-hidden rounded-full px-1.5 py-2"
         style={{
           background: 'hsl(var(--glass-bg))',
           border: '1px solid hsl(var(--glass-border))',
@@ -240,7 +240,7 @@ export default function PositionCalculator() {
           {activeIndex >= 0 && (
             <motion.div
               layoutId="inst-pill"
-              className="absolute rounded-xl pointer-events-none"
+              className="absolute rounded-full pointer-events-none"
               style={{
                 background: 'hsl(var(--primary) / 0.12)',
                 border: '1px solid hsl(var(--primary) / 0.25)',
@@ -259,7 +259,7 @@ export default function PositionCalculator() {
               <motion.button
                 key={inst}
                 onClick={() => store.setInstrument(inst)}
-                className="relative flex flex-col items-center gap-0.5 flex-1 py-1.5 rounded-xl"
+                className="relative flex flex-col items-center gap-0.5 flex-1 py-1.5 rounded-full"
                 whileTap={{ scale: 0.85 }}
                 whileHover={{ scale: 1.07 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
