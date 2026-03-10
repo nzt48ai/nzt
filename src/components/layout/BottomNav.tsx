@@ -41,7 +41,7 @@ export default function BottomNav() {
           {activeIndex >= 0 && (
             <motion.div
               layoutId="active-pill"
-              className="absolute rounded-xl pointer-events-none"
+              className="absolute rounded-full pointer-events-none"
               style={{
                 background: 'hsl(var(--primary) / 0.12)',
                 border: '1px solid hsl(var(--primary) / 0.25)',
