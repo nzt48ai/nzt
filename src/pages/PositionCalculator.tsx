@@ -227,7 +227,7 @@ export default function PositionCalculator() {
 
       {/* Instrument Selector */}
       <div
-        className="relative overflow-hidden rounded-[22px] px-1.5 py-2"
+        className="relative overflow-hidden rounded-full px-1.5 py-2"
         style={{
           background: 'hsl(var(--glass-bg))',
           border: '1px solid hsl(var(--glass-border))',
