@@ -43,8 +43,8 @@
 
     --radius: 1rem;
 
-    --glass-bg: 0 0% 100% / 0.55;
-    --glass-border: 0 0% 100% / 0.45;
+    --glass-bg: 0 0% 100% / 0.35;
+    --glass-border: 0 0% 100% / 0.35;
     --glass-blur: 20px;
     --glow-primary: 220 80% 55%;
     --glow-accent: 38 95% 55%;
@@ -96,8 +96,8 @@
     --input: 220 20% 30% / 0.35;
     --ring: 220 80% 60%;
 
-    --glass-bg: 220 20% 14% / 0.55;
-    --glass-border: 220 30% 60% / 0.15;
+    --glass-bg: 220 20% 14% / 0.35;
+    --glass-border: 220 30% 60% / 0.12;
     --glass-blur: 20px;
     --glow-primary: 220 80% 60%;
     --glow-accent: 38 90% 55%;

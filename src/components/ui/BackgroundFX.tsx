@@ -185,7 +185,6 @@ export default function BackgroundFX() {
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       <ChartPattern />
       <GlowFields />
-      <Particles />
     </div>
   );
 }
