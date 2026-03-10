@@ -259,7 +259,7 @@ export default function PositionCalculator() {
               <motion.button
                 key={inst}
                 onClick={() => store.setInstrument(inst)}
-                className="relative flex flex-col items-center gap-0.5 flex-1 py-1.5 rounded-xl"
+                className="relative flex flex-col items-center gap-0.5 flex-1 py-1.5 rounded-full"
                 whileTap={{ scale: 0.85 }}
                 whileHover={{ scale: 1.07 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
