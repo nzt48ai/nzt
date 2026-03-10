@@ -26,7 +26,7 @@ export default function BottomNav() {
       transition={{ duration: 0.4, ease: 'easeOut', delay: 0.1 }}
     >
       <nav
-        className="relative overflow-hidden rounded-[22px] px-1.5 py-2 transition-colors duration-300"
+        className="relative overflow-hidden rounded-full px-1.5 py-2 transition-colors duration-300"
         style={{
           background: 'hsl(var(--glass-bg))',
           border: '1px solid hsl(var(--glass-border))',
